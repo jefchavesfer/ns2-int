@@ -2,3 +2,4 @@
 *.nam
 *.tcl
 org.eclipse.jdt.core.*
+bin/
