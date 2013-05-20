@@ -1,0 +1,4 @@
+*.tr
+*.nam
+*.tcl
+org.eclipse.jdt.core.*
