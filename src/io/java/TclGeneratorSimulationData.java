@@ -1,4 +1,4 @@
-package main.java;
+package io.java;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,7 @@ public class TclGeneratorSimulationData {
 	private Float deliveryRate;
 	private Float meanDelay;
 	
-	TclGeneratorSimulationData(){
+	public TclGeneratorSimulationData(){
 		this.packetData = new HashMap<Integer, TreeDataInfo>();
 		this.flowData = new HashMap<String, FlowNode>();
 		this.queueData = new HashMap<String, DataNode>();

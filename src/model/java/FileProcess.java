@@ -1,6 +1,9 @@
-package main.java;
+package model.java;
 
-import java.io.IOException;
+import io.java.FileReader;
+import io.java.SimulationParams;
+import io.java.TclGeneratorSimulationData;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,7 +15,7 @@ import java.util.logging.Logger;
 import tree.java.DataNode;
 import tree.java.FlowNode;
 
-class FileProcess {
+public class FileProcess {
 
 	private List<TclGeneratorSimulationData> tclGenSimulationData;
 	private Float timeInterval = 5.0f;
@@ -35,7 +38,7 @@ class FileProcess {
 		this.log = Logger.getLogger(SimulationParams.class.getName());
 	}
 	
-	public void processFile() throws IOException {
+	public void processFile() {
 		Integer n0 = this.nn / 2;
 		FileReader trFile = new FileReader(this.fileRadical + ".tr");
 		String trLine;
@@ -57,6 +60,7 @@ class FileProcess {
 				}
 			}
 		} while (trLine != null);
+		trFile.close();
 		this.generateTclSimulationData(maxTime,
 				tclSimulationData);
 	}

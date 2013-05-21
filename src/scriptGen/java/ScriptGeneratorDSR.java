@@ -1,39 +1,24 @@
-package main.java;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+package scriptGen.java;
+import io.java.TclGeneratorSimulationData;
+
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import tree.java.DataNode;
 
 public class ScriptGeneratorDSR {
 	static String br = "\r\n";
-	BufferedWriter bw;
+	FileWriter scriptFile;
 	private TclGeneratorSimulationData data;
 	
-	ScriptGeneratorDSR(TclGeneratorSimulationData data){
+	public ScriptGeneratorDSR(TclGeneratorSimulationData data) throws IOException{
 		   	this.data = data;
-			try{ 
-			   File file = new File(this.data.getFileRadical() + ".tcl");
-			   // if file doesn't exists, then create it
-			   if (!file.exists()) {
-				   file.createNewFile();
-			   }
-							
-			   FileOutputStream fstream =  new FileOutputStream(file);
-				
-			   DataOutputStream out = new DataOutputStream(fstream);
-			   this.bw = new BufferedWriter(new OutputStreamWriter(out));	   
-		   }catch (Exception e){//Catch exception if any
-				System.err.println("Error: " + e.getMessage());
-		   }
+		    this.scriptFile = new FileWriter(this.data.getFileRadical() + ".tcl");
 	   }
 	
 	private void writeHeader() throws IOException{
-		this.bw.write(																					  br +
+		this.scriptFile.write(																					  br +
 				"# Initializing"																		+ br +
 				"set ns_		[new Simulator]"														+ br +
 																										  br +
@@ -121,7 +106,7 @@ public class ScriptGeneratorDSR {
 		);
 	}
 	private void writeAgents(Float t0, Float tf, Integer source, Integer destination, Integer flow, Float rate ) throws IOException{
-		this.bw.write(																					  br +
+		this.scriptFile.write(																					  br +
 				"#source node"  																		+ br +
 				"#creating udp agent"																	+ br +
 				"puts \"creating udp(" + flow + ")\""													+ br +
@@ -158,7 +143,7 @@ public class ScriptGeneratorDSR {
 	}
 	
 	private void writeSimulation() throws IOException{
-		this.bw.write(																					  br + 
+		this.scriptFile.write(																					  br + 
 		"#"																								+ br +
 		"# finishing simulation"																		+ br +
 		"#"																								+ br +
@@ -199,7 +184,7 @@ public class ScriptGeneratorDSR {
 		}
 		
 		this.writeSimulation();
-		this.bw.flush();
-		this.bw.close();
+		this.scriptFile.flush();
+		this.scriptFile.close();
 	}
 }

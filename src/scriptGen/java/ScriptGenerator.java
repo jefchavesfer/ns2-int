@@ -1,39 +1,25 @@
-package main.java;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+package scriptGen.java;
+import io.java.TclGeneratorSimulationData;
+
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import tree.java.DataNode;
 
 public class ScriptGenerator {
-	static String br = " \r\n";
-	BufferedWriter bw;
+	private static String br = " \r\n";
+	private FileWriter scriptFile;
+	
 	private TclGeneratorSimulationData data;
 	
-	ScriptGenerator(String fileName, TclGeneratorSimulationData data){
-		   	this.data = data;
-			try{ 
-			   File file = new File(fileName);
-			   // if file doesn't exists, then create it
-			   if (!file.exists()) {
-				   file.createNewFile();
-			   }
-							
-			   FileOutputStream fstream =  new FileOutputStream(file);
-				
-			   DataOutputStream out = new DataOutputStream(fstream);
-			   this.bw = new BufferedWriter(new OutputStreamWriter(out));	   
-		   }catch (Exception e){//Catch exception if any
-				System.err.println("Error: " + e.getMessage());
-		   }
-	   }
+	ScriptGenerator(String fileName, TclGeneratorSimulationData data) throws IOException{
+	   	this.data = data;
+	   	this.scriptFile = new FileWriter(fileName);			
+	}
 	
 	private void writeHeader() throws IOException{
-		this.bw.write(																					  br + 
+		this.scriptFile.write(																			  br + 
 		"# Inicialization " 																			+ br +
 		"set ns_		[new Simulator] " 																+ br + 
 
@@ -122,7 +108,7 @@ public class ScriptGenerator {
 		"	} else {"																					+ br +
 		"		set pos_x [expr $pos_x + $distNodes]"													+ br +
 		"	}"																							+ br +
-		"	puts \"nó $i: ($pos_x, $pos_y)\""															+ br +
+		"	puts \"nï¿½ $i: ($pos_x, $pos_y)\""															+ br +
 		"	$node_($i) set X_ $pos_x"																	+ br +
 		"	$node_($i) set Y_ $pos_y"																	+ br +
 		"	$node_($i) set Z_ 0"																		+ br +
@@ -138,7 +124,7 @@ public class ScriptGenerator {
 		
 	}
 	private void writeAgents(Float t0, Integer source, Integer destination, Integer flow ) throws IOException{
-		this.bw.write(
+		this.scriptFile.write(
 //		"#0 a 19 sao os emissores"																		+ br +
 //		"#os nos sao escolhidos sem repeticao"															+ br +
 //		"for {set i 0} {$i < $opt(nt)} {incr i} {"														+ br +
@@ -180,7 +166,7 @@ public class ScriptGenerator {
 		
 	}
 	private void writeSimulation() throws IOException{
-		this.bw.write(																					  br + 
+		this.scriptFile.write(																					  br + 
 		"#"																								+ br +
 		"# Terminando a simulacao"																		+ br +
 		"#"																								+ br +
@@ -188,7 +174,7 @@ public class ScriptGenerator {
 		"    $ns_ at $opt(fim).01 \"$node_($i) reset\""													+ br +
 		"}"																								+ br +
 
-		"# parando animação no nam"																		+ br +
+		"# parando animaï¿½ï¿½o no nam"																		+ br +
 		"$ns_ at  $opt(fim).01	\"$ns_ nam-end-wireless $opt(fim)\""									+ br +
 		"$ns_ at $opt(fim).01 \"puts \"NS EXITING...\" ; $ns_ halt"										+ br +
 
@@ -216,7 +202,7 @@ public class ScriptGenerator {
 			iFlow ++;
 		}
 		this.writeSimulation();
-		this.bw.flush();
-		this.bw.close();
+		this.scriptFile.flush();
+		this.scriptFile.close();
 	}
 }

@@ -1,4 +1,4 @@
-package main.java;
+package io.java;
 
 public class SimulationParams {
 

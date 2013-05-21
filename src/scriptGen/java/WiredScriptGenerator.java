@@ -1,39 +1,23 @@
-package main.java;
-import java.io.BufferedWriter;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+package scriptGen.java;
+import io.java.SimulationParams;
+
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 public class WiredScriptGenerator {
 	static String br = " \r\n";
-	private BufferedWriter bw;
+	private FileWriter scriptFile;
 	
 	private SimulationParams simulationParams;
 	
-	public WiredScriptGenerator(SimulationParams simulationParams) {
+	public WiredScriptGenerator(SimulationParams simulationParams) throws IOException {
 		super(); 
 		this.simulationParams = simulationParams;
-
-		try{ 
-		   File file = new File(this.simulationParams.getWiredFileDiscriminator() + ".tcl");
-		   // if file doesn't exists, then create it
-		   if (!file.exists()) {
-			   file.createNewFile();
-		   }
-						
-		   FileOutputStream fstream =  new FileOutputStream(file);
-			
-		   DataOutputStream out = new DataOutputStream(fstream);
-		   this.bw = new BufferedWriter(new OutputStreamWriter(out));	   
-	   }catch (Exception e){//Catch exception if any
-			System.err.println("Error: " + e.getMessage());
-	   }
+		this.scriptFile = new FileWriter(this.simulationParams.getWiredFileDiscriminator() + ".tcl");
 	}
 	
 	private void writeSimulation() throws IOException{
-		this.bw.write(																									 											  br +
+		this.scriptFile.write(																									 											  br +
 				"set nc " + this.simulationParams.getNumberOfClusters() + " ;# number of clusters"																											+ br +
 				"set nn " + this.simulationParams.getNumberOfNodesInCluster() + " ;# total number of src/router nodes in each cluster"																				+ br +
 				"set distNodes 100 ;# distande between cluster nodes"																								+ br +
@@ -427,7 +411,7 @@ public class WiredScriptGenerator {
 		
 	public void generateScript() throws IOException{
 		this.writeSimulation();
-		this.bw.flush();
-		this.bw.close();
+		this.scriptFile.flush();
+		this.scriptFile.close();
 	}
 }

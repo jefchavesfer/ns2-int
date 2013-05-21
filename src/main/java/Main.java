@@ -1,8 +1,16 @@
 package main.java;
 
+import io.java.SimulationParams;
+import io.java.TclGeneratorSimulationData;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
+
+import model.java.FileProcess;
+import model.java.SimulationExecutor;
+import model.java.WirelessFileProcess;
+import scriptGen.java.WiredScriptGenerator;
 
 class Main {
 

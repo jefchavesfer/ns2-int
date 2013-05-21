@@ -1,7 +1,11 @@
 package main.java;
 
+import io.java.TclGeneratorSimulationData;
+
 import java.io.IOException;
 import java.util.List;
+
+import scriptGen.java.ScriptGeneratorDSR;
 
 public class WirelessNodeSimulationProcessor {
 	

@@ -1,6 +1,8 @@
-package main.java;
+package model.java;
 
-import java.io.IOException;
+import io.java.TclGeneratorSimulationData;
+
+import io.java.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -8,10 +10,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import tree.java.FlowNode;
 import tree.java.DataNode;
+import tree.java.FlowNode;
 
-class WirelessFileProcess {
+public class WirelessFileProcess {
 	
 	private List<TclGeneratorSimulationData> tclGenSimulationData;
 	private Integer  nn;
@@ -31,7 +33,7 @@ class WirelessFileProcess {
 		this.log = Logger.getLogger(WirelessFileProcess.class.getName()); 
 	}
 	
-	public void processFile() throws IOException {
+	public void processFile() {
 		while(this.i < this.numberOfScripts){	
 			String filename = this.fileDiscriminator + i + ".tr" ;
 			System.out.println(filename);
@@ -56,6 +58,7 @@ class WirelessFileProcess {
 					} 
 				}
 			} while (trLine != null);
+			trFile.close();
 			if(!first){ //there's at least one parseable line
 				tclSimulationData.setTf(Float.valueOf(time));
 				this.timeInterval = tclSimulationData.getTf() - tclSimulationData.getT0();	
