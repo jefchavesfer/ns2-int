@@ -4,6 +4,12 @@ import io.java.SimulationParams;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Generates ns2-script for the wired simulation
+ *
+ * @author jchaves
+ *
+ */
 public class WiredScriptGenerator {
 	static String br = " \r\n";
 	private FileWriter scriptFile;
@@ -344,12 +350,17 @@ public class WiredScriptGenerator {
 				"			set nrand_y   [expr int(rand()*$numerao) % $x  ]"																						+ br +
 				"			set restartProc 0"																														+ br +
 				"			if { $nrand_cld == $nrand_cls } {"																										+ br +
+				"                               #puts \" nrand_cld ($nrand_cld) == nrand_cls ($nrand_cls)\"" + br +
 				"				set restartProc 1"																													+ br +
 				"			} elseif {$nrand_x == $xCluster && $nrand_y == $yCluster} {"																			+ br +
+				"                               #puts \" nrand_x ($nrand_x) == xCluster ($xCluster)\"" + br +
+				"                               #puts \" nrand_y ($nrand_y) == yCluster ($yCluster)\"" + br +
 				"				set restartProc 1"																													+ br +
 				"			} else {"																																+ br +
 				" 				for { set aux 0 } { $aux < $idFlow } { incr aux } {"																				+ br +
 				"					if { $s($aux) == \"[expr $nrand_cld][expr $nrand_x][expr $nrand_y]\" || $d($aux) == \"[expr $nrand_cld][expr $nrand_x][expr $nrand_y]\"} {" + br +
+				"                                               #puts \"  $s($aux) == \\\"[expr $nrand_cld][expr $nrand_x][expr $nrand_y]\\\" \"" + br +
+                                "                                               #puts \" $d($aux) == \\\"[expr $nrand_cld][expr $nrand_x][expr $nrand_y]\\\" \"" + br +
 				"						set restartProc 1"																											+ br +
 				"					}"																																+ br +
 				"				}"																																	+ br +
