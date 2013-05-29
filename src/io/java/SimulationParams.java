@@ -1,207 +1,363 @@
+
 package io.java;
 
+
+import java.util.Map;
+
+
+/**
+ * @author jchaves
+ */
 public class SimulationParams {
 
-	private String wiredFileDiscriminator;
-	private String wirelessFileDiscriminator;
-	private Integer initialTime;
-	private Integer endTime;
-	
-	private Integer numberOfNodesInCluster;
-	private Integer numberOfClusters;
-	private Float internalTraffic;
-	private Float externalTraffic;
-	private Integer packetSize;
-	private String linkDelay;
-	private Integer wirelessQueueSize;
-	private Integer wiredQueueSize;
-	
-	private Float timeInterval;
-	private Float appThroughput;
-	private String wiredBandwidth;
-	private Float dissimilarityCoefficient;
-	private Float maxRelDifDeliveryRate;
-	private Float maxRelDifMeanDelay;
-	private Boolean converged;
-	
-	public Float getAppThroughput() {
-		return appThroughput;
-	}
+    private String wiredFileDiscriminator;
+    private String wirelessFileDiscriminator;
+    private Integer initialTime;
+    private Integer endTime;
 
-	public void setAppThroughput(Float appThroughput) {
-		this.appThroughput = appThroughput;
-	}
+    private Integer numberOfNodesInCluster;
+    private Integer numberOfClusters;
+    private Float internalTraffic;
+    private Float externalTraffic;
+    private Integer packetSize;
+    private String linkDelay;
+    private Integer wirelessQueueSize;
+    private Integer wiredQueueSize;
 
-	public String getWiredBandwidth() {
-		return wiredBandwidth;
-	}
+    private Float timeInterval;
+    private Float appThroughput;
+    private String wiredBandwidth;
+    private Float dissimilarityCoefficient;
+    private Float maxRelDifDeliveryRate;
+    private Float maxRelDifMeanDelay;
+    private Boolean converged;
 
-	public void setWiredBandwidth(String wiredBandwidth) {
-		this.wiredBandwidth = wiredBandwidth;
-	}
+    private Map<NodeData, NodeData> internalFlowMap;
+    private Map<NodeData, NodeData> externalFlowMap;
 
-	public Integer getPacketSize() {
-		return packetSize;
-	}
+    /**
+     * @return appThroughput
+     */
+    public Float getAppThroughput() {
+        return this.appThroughput;
+    }
 
-	public void setPacketSize(Integer packetSize) {
-		this.packetSize = packetSize;
-	}
+    /**
+     * @param appThroughput
+     */
+    public void setAppThroughput(Float appThroughput) {
+        this.appThroughput = appThroughput;
+    }
 
-	public Float getInternalTraffic() {
-		return internalTraffic;
-	}
+    /**
+     * @return wiredBandwidth
+     */
+    public String getWiredBandwidth() {
+        return this.wiredBandwidth;
+    }
 
-	public void setInternalTraffic(Float internalTraffic) {
-		this.internalTraffic = internalTraffic;
-	}
+    /**
+     * @param wiredBandwidth
+     */
+    public void setWiredBandwidth(String wiredBandwidth) {
+        this.wiredBandwidth = wiredBandwidth;
+    }
 
-	public Float getExternalTraffic() {
-		return externalTraffic;
-	}
+    /**
+     * @return packetSize
+     */
+    public Integer getPacketSize() {
+        return this.packetSize;
+    }
 
-	public void setExternalTraffic(Float externalTraffic) {
-		this.externalTraffic = externalTraffic;
-	}
+    /**
+     * @param packetSize
+     */
+    public void setPacketSize(Integer packetSize) {
+        this.packetSize = packetSize;
+    }
 
-	public String getLinkDelay() {
-		return linkDelay;
-	}
+    /**
+     * @return internalTraffic
+     */
+    public Float getInternalTraffic() {
+        return this.internalTraffic;
+    }
 
-	public void setLinkDelay(String linkDelay) {
-		this.linkDelay = linkDelay;
-	}
+    /**
+     * @param internalTraffic
+     */
+    public void setInternalTraffic(Float internalTraffic) {
+        this.internalTraffic = internalTraffic;
+    }
 
-	public Float getDissimilarityCoefficient() {
-		return dissimilarityCoefficient;
-	}
+    /**
+     * @return externalTraffic
+     */
+    public Float getExternalTraffic() {
+        return this.externalTraffic;
+    }
 
-	public void setDissimilarityCoefficient(Float dissimilarityCoefficient) {
-		this.dissimilarityCoefficient = dissimilarityCoefficient;
-	}
+    /**
+     * @param externalTraffic
+     */
+    public void setExternalTraffic(Float externalTraffic) {
+        this.externalTraffic = externalTraffic;
+    }
 
-	public Float getMaxRelDifDeliveryRate() {
-		return maxRelDifDeliveryRate;
-	}
+    /**
+     * @return linkDelay
+     */
+    public String getLinkDelay() {
+        return this.linkDelay;
+    }
 
-	public void setMaxRelDifDeliveryRate(Float maxRelDifDeliveryRate) {
-		this.maxRelDifDeliveryRate = maxRelDifDeliveryRate;
-	}
+    /**
+     * @param linkDelay
+     */
+    public void setLinkDelay(String linkDelay) {
+        this.linkDelay = linkDelay;
+    }
 
-	public Float getMaxRelDifMeanDelay() {
-		return maxRelDifMeanDelay;
-	}
+    /**
+     * @return dissimilarityCoefficient
+     */
+    public Float getDissimilarityCoefficient() {
+        return this.dissimilarityCoefficient;
+    }
 
-	public void setMaxRelDifMeanDelay(Float maxRelDifMeanDelay) {
-		this.maxRelDifMeanDelay = maxRelDifMeanDelay;
-	}
-	
-	public Boolean isConverged() {
-		return converged;
-	}
+    /**
+     * @param dissimilarityCoefficient
+     */
+    public void setDissimilarityCoefficient(Float dissimilarityCoefficient) {
+        this.dissimilarityCoefficient = dissimilarityCoefficient;
+    }
 
-	public void setConverged(Boolean converged) {
-		this.converged = converged;
-	}
+    /**
+     * @return maxRelDifDeliveryRate
+     */
+    public Float getMaxRelDifDeliveryRate() {
+        return this.maxRelDifDeliveryRate;
+    }
 
-	
-	public Float getTimeInterval() {
-		return timeInterval;
-	}
+    /**
+     * @param maxRelDifDeliveryRate
+     */
+    public void setMaxRelDifDeliveryRate(Float maxRelDifDeliveryRate) {
+        this.maxRelDifDeliveryRate = maxRelDifDeliveryRate;
+    }
 
-	public void setTimeInterval(Float timeInterval) {
-		this.timeInterval = timeInterval;
-	}
-	
-	public String getWiredFileDiscriminator() {
-		return wiredFileDiscriminator;
-	}
+    /**
+     * @return maxRelDifMeanDelay
+     */
+    public Float getMaxRelDifMeanDelay() {
+        return this.maxRelDifMeanDelay;
+    }
 
-	public void setWiredFileDiscriminator(String wiredFileDiscriminator) {
-		this.wiredFileDiscriminator = wiredFileDiscriminator;
-	}
+    /**
+     * @param maxRelDifMeanDelay
+     */
+    public void setMaxRelDifMeanDelay(Float maxRelDifMeanDelay) {
+        this.maxRelDifMeanDelay = maxRelDifMeanDelay;
+    }
 
-	public String getWirelessFileDiscriminator() {
-		return wirelessFileDiscriminator;
-	}
+    /**
+     * @return converged
+     */
+    public Boolean isConverged() {
+        return this.converged;
+    }
 
-	public void setWirelessFileDiscriminator(String wirelessFileDiscriminator) {
-		this.wirelessFileDiscriminator = wirelessFileDiscriminator;
-	}
-	
-	public Integer getInitialTime() {
-		return initialTime;
-	}
+    /**
+     * @param converged
+     */
+    public void setConverged(Boolean converged) {
+        this.converged = converged;
+    }
 
-	public void setInitialTime(Integer initialTime) {
-		this.initialTime = initialTime;
-	}
+    /**
+     * @return timeInterval
+     */
+    public Float getTimeInterval() {
+        return this.timeInterval;
+    }
 
-	public Integer getEndTime() {
-		return endTime;
-	}
+    /**
+     * @param timeInterval
+     */
+    public void setTimeInterval(Float timeInterval) {
+        this.timeInterval = timeInterval;
+    }
 
-	public void setEndTime(Integer endTime) {
-		this.endTime = endTime;
-	}
+    /**
+     * @return wiredFileDiscriminator
+     */
+    public String getWiredFileDiscriminator() {
+        return this.wiredFileDiscriminator;
+    }
 
-	public Integer getNumberOfNodesInCluster() {
-		return numberOfNodesInCluster;
-	}
+    /**
+     * @param wiredFileDiscriminator
+     */
+    public void setWiredFileDiscriminator(String wiredFileDiscriminator) {
+        this.wiredFileDiscriminator = wiredFileDiscriminator;
+    }
 
-	public void setNumberOfNodesInCluster(Integer numberOfNodesInCluster) {
-		this.numberOfNodesInCluster = numberOfNodesInCluster;
-	}
+    /**
+     * @return wirelessFileDiscriminator
+     */
+    public String getWirelessFileDiscriminator() {
+        return this.wirelessFileDiscriminator;
+    }
 
-	public Integer getNumberOfClusters() {
-		return numberOfClusters;
-	}
+    /**
+     * @param wirelessFileDiscriminator
+     */
+    public void setWirelessFileDiscriminator(String wirelessFileDiscriminator) {
+        this.wirelessFileDiscriminator = wirelessFileDiscriminator;
+    }
 
-	public void setNumberOfClusters(Integer numberOfClusters) {
-		this.numberOfClusters = numberOfClusters;
-	}
+    /**
+     * @return initialTime
+     */
+    public Integer getInitialTime() {
+        return this.initialTime;
+    }
 
-	public Integer getWirelessQueueSize() {
-		return wirelessQueueSize;
-	}
+    /**
+     * @param initialTime
+     */
+    public void setInitialTime(Integer initialTime) {
+        this.initialTime = initialTime;
+    }
 
-	public void setWirelessQueueSize(Integer wirelessQueueSize) {
-		this.wirelessQueueSize = wirelessQueueSize;
-	}
-	
-	public Integer getWiredQueueSize() {
-		return wiredQueueSize;
-	}
+    /**
+     * @return endTime
+     */
+    public Integer getEndTime() {
+        return this.endTime;
+    }
 
-	public void setWiredQueueSize(Integer wiredQueueSize) {
-		this.wiredQueueSize = wiredQueueSize;
-	}
+    /**
+     * @param endTime
+     */
+    public void setEndTime(Integer endTime) {
+        this.endTime = endTime;
+    }
 
-	public SimulationParams clone(){
-		
-		SimulationParams cloned = new SimulationParams();
-		
-		cloned.setWiredFileDiscriminator(this.wiredFileDiscriminator);
-		cloned.setWirelessFileDiscriminator(this.wirelessFileDiscriminator);
-		cloned.setInitialTime(this.initialTime);
-		cloned.setEndTime(this.endTime);
-		cloned.setTimeInterval(this.timeInterval);
-		cloned.setNumberOfNodesInCluster(this.numberOfNodesInCluster);
-		cloned.setNumberOfClusters(this.numberOfClusters);
-		cloned.setInternalTraffic(this.internalTraffic);
-		cloned.setExternalTraffic(this.externalTraffic);
-		cloned.setPacketSize(this.packetSize);
-		cloned.setLinkDelay(this.linkDelay);
-		cloned.setWirelessQueueSize(this.wirelessQueueSize);
-		cloned.setWiredQueueSize(this.wiredQueueSize);
-		
-		cloned.setAppThroughput(this.appThroughput);
-		cloned.setWiredBandwidth(this.wiredBandwidth);
-		cloned.setDissimilarityCoefficient(this.dissimilarityCoefficient);
-		cloned.setMaxRelDifDeliveryRate(this.maxRelDifDeliveryRate);
-		cloned.setMaxRelDifMeanDelay(this.maxRelDifMeanDelay);
-		cloned.setConverged(this.converged);
+    /**
+     * @return numberOfNodesInCluster
+     */
+    public Integer getNumberOfNodesInCluster() {
+        return this.numberOfNodesInCluster;
+    }
 
-		return cloned;
-	}
+    /**
+     * @param numberOfNodesInCluster
+     */
+    public void setNumberOfNodesInCluster(Integer numberOfNodesInCluster) {
+        this.numberOfNodesInCluster = numberOfNodesInCluster;
+    }
+
+    /**
+     * @return numberOfClusters
+     */
+    public Integer getNumberOfClusters() {
+        return this.numberOfClusters;
+    }
+
+    /**
+     * @param numberOfClusters
+     */
+    public void setNumberOfClusters(Integer numberOfClusters) {
+        this.numberOfClusters = numberOfClusters;
+    }
+
+    /**
+     * @return wirelessQueueSize
+     */
+    public Integer getWirelessQueueSize() {
+        return this.wirelessQueueSize;
+    }
+
+    /**
+     * @param wirelessQueueSize
+     */
+    public void setWirelessQueueSize(Integer wirelessQueueSize) {
+        this.wirelessQueueSize = wirelessQueueSize;
+    }
+
+    /**
+     * @return wiredQueueSize
+     */
+    public Integer getWiredQueueSize() {
+        return this.wiredQueueSize;
+    }
+
+    /**
+     * @param wiredQueueSize
+     */
+    public void setWiredQueueSize(Integer wiredQueueSize) {
+        this.wiredQueueSize = wiredQueueSize;
+    }
+
+    /**
+     * @return internalFlowMap
+     */
+    public Map<NodeData, NodeData> getInternalFlowMap() {
+        return this.internalFlowMap;
+    }
+
+    /**
+     * @param internalFlowMap
+     */
+    public void setInternalFlowMap(Map<NodeData, NodeData> internalFlowMap) {
+        this.internalFlowMap = internalFlowMap;
+    }
+
+    /**
+     * @return externalFlowMap
+     */
+    public Map<NodeData, NodeData> getExternalFlowMap() {
+        return this.externalFlowMap;
+    }
+
+    /**
+     * @param externalFlowMap
+     */
+    public void setExternalFlowMap(Map<NodeData, NodeData> externalFlowMap) {
+        this.externalFlowMap = externalFlowMap;
+    }
+
+    @Override
+    public SimulationParams clone() {
+
+        SimulationParams cloned = new SimulationParams();
+
+        cloned.setWiredFileDiscriminator(this.wiredFileDiscriminator);
+        cloned.setWirelessFileDiscriminator(this.wirelessFileDiscriminator);
+        cloned.setInitialTime(this.initialTime);
+        cloned.setEndTime(this.endTime);
+        cloned.setTimeInterval(this.timeInterval);
+        cloned.setNumberOfNodesInCluster(this.numberOfNodesInCluster);
+        cloned.setNumberOfClusters(this.numberOfClusters);
+        cloned.setInternalTraffic(this.internalTraffic);
+        cloned.setExternalTraffic(this.externalTraffic);
+        cloned.setPacketSize(this.packetSize);
+        cloned.setLinkDelay(this.linkDelay);
+        cloned.setWirelessQueueSize(this.wirelessQueueSize);
+        cloned.setWiredQueueSize(this.wiredQueueSize);
+
+        cloned.setAppThroughput(this.appThroughput);
+        cloned.setWiredBandwidth(this.wiredBandwidth);
+        cloned.setDissimilarityCoefficient(this.dissimilarityCoefficient);
+        cloned.setMaxRelDifDeliveryRate(this.maxRelDifDeliveryRate);
+        cloned.setMaxRelDifMeanDelay(this.maxRelDifMeanDelay);
+        cloned.setConverged(this.converged);
+
+        cloned.setInternalFlowMap(this.internalFlowMap);
+        cloned.setExternalFlowMap(this.externalFlowMap);
+
+        return cloned;
+    }
 }

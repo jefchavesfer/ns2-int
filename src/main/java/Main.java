@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import model.java.FileProcess;
 import model.java.SimulationExecutor;
 import model.java.WirelessFileProcess;
+import scriptGen.java.MakeFlows;
 import scriptGen.java.WiredScriptGenerator;
 
 
@@ -73,6 +74,9 @@ class Main {
         simulationParams.setConverged(Boolean.FALSE);
 
         final Logger log = Logger.getLogger(Main.class.getName());
+
+        // putting flow data inside simulation params
+        MakeFlows.make(simulationParams);
 
         // File for the convergence report
         FileWriter convergenceReport = new FileWriter("convergenceReport.txt");

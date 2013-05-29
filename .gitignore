@@ -1,5 +1,7 @@
 *.tr
 *.nam
 *.tcl
+*.txt
+*~
 org.eclipse.jdt.core.*
 bin/
