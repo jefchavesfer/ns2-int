@@ -30,7 +30,7 @@ public class SimulationParams {
     private Float dissimilarityCoefficient;
     private Float maxRelDifDeliveryRate;
     private Float maxRelDifMeanDelay;
-    private Boolean converged;
+    private Boolean converged = Boolean.FALSE;
 
     private Map<NodeData, NodeData> internalFlowMap;
     private Map<NodeData, NodeData> externalFlowMap;

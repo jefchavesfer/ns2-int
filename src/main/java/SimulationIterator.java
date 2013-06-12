@@ -120,7 +120,7 @@ public class SimulationIterator {
                 Float wiredBandwidth =
                         Float.valueOf(this.simulationParams.getWiredBandwidth().substring(0,
                                 this.simulationParams.getWiredBandwidth().length() - 2));
-                newSimulationParams.setWiredBandwidth((wiredBandwidth * (1 + errRelDelay)) + "Mb");
+                newSimulationParams.setWiredBandwidth((wiredBandwidth * (1 - errRelDelay)) + "Mb");
             } else {
                 // WIN
                 strLog = "STATE: FOUND balanced parameters";
@@ -130,7 +130,7 @@ public class SimulationIterator {
             }
         }
         strLog =
-                "Relative error for delivery rate " + errRelDelivery + "\n" + "New wired bandwidth "
+                "Relative error for delivery rate " + errRelDelivery + "\n" + "New app throughput "
                         + newSimulationParams.getAppThroughput() + "\n" + "Relative error for mean delay    "
                         + errRelDelay + "\n" + "New wired bandwidth " + newSimulationParams.getWiredBandwidth() + "\n";
         this.log.info(strLog);

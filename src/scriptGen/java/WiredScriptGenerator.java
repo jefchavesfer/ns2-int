@@ -121,32 +121,32 @@ public class WiredScriptGenerator {
 			"	set rc [expr $i + 1]" + br + br +
 
 			"	#down cluster"	+ br +
-			"	set dc [expr $i + $xc]" + br +
+			"	set dc [expr $i + $xc]" + br + br + 
 
-			"	#down-right cluster"																															+ br +
-			"	set drc [expr $i + $xc + 1]"																													+ br +
+			"	#down-right cluster" + br + 
+			"	set drc [expr $i + $xc + 1]" + br + br +
 
-			"	#down-left cluster"																																+ br +
-			"	set dlc [expr $i + $xc - 1]"																													+ br +
-				
-			"	#making connections, if possible"																												+ br +
-			"	set maxInLine     [expr $xc * (int($i / $xc) + 1)]"																								+ br +																									
-			"	set minInNextLine [expr $maxInLine - 1]"																										+ br +
-			"	set maxInNextLine [expr $minInNextLine + $xc + 1]"																								+ br +
+			"	#down-left cluster" + br +
+			"	set dlc [expr $i + $xc - 1]" + br + br + 
+			
+			"	#making connections, if possible" + br +
+			"	set maxInLine     [expr $xc * (int($i / $xc) + 1)]" + br +																									
+			"	set minInNextLine [expr $maxInLine - 1]" + br +
+			"	set maxInNextLine [expr $minInNextLine + $xc + 1]" + br + br +
 						
-			"	if { $rc < $maxInLine } {"																														+ br +	
-			"		$Nocns duplex-link    $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) $max_bandwidth $linkDelay DropTail"								+ br +
-			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) orient right"														+ br +
-			"		$Nocns queue-limit    $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) $buffSize"															+ br +
-			"		$Nocns queue-limit    $r($rc$xCluster$yCluster) $r($i$xCluster$yCluster) $buffSize ;#double direction"										+ br +
-			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) queuePos 0.5"														+ br +
-			"	}"																																				+ br +
-			"	if { $dc < $nc } {"																																+ br +	
-			"		$Nocns duplex-link    $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) $max_bandwidth $linkDelay DropTail"								+ br +
-			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) orient down"														+ br +
-			"		$Nocns queue-limit    $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) $buffSize"															+ br +
-			"		$Nocns queue-limit    $r($dc$xCluster$yCluster) $r($i$xCluster$yCluster) $buffSize ;#double direction"										+ br +
-			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) queuePos 0.5"														+ br +
+			"	if { $rc < $maxInLine } {" + br +	
+			"		$Nocns duplex-link    $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) $max_bandwidth $linkDelay DropTail" + br +
+			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) orient right" + br +
+			"		$Nocns queue-limit    $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) $buffSize" + br +
+			"		$Nocns queue-limit    $r($rc$xCluster$yCluster) $r($i$xCluster$yCluster) $buffSize ;#double direction" + br +
+			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($rc$xCluster$yCluster) queuePos 0.5" + br + br +
+			"	}" + br +
+			"	if { $dc < $nc } {" + br +	
+			"		$Nocns duplex-link    $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) $max_bandwidth $linkDelay DropTail" + br +
+			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) orient down" + br +
+			"		$Nocns queue-limit    $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) $buffSize" + br +
+			"		$Nocns queue-limit    $r($dc$xCluster$yCluster) $r($i$xCluster$yCluster) $buffSize ;#double direction" + br +
+			"		$Nocns duplex-link-op $r($i$xCluster$yCluster) $r($dc$xCluster$yCluster) queuePos 0.5" + br +
 			"	}"																																				+ br +
 			"	if { $drc < $nc &&  $drc < $maxInNextLine  } {"																									+ br +
 			"		$Nocns duplex-link    $r($i$xCluster$yCluster) $r($drc$xCluster$yCluster) $max_bandwidth $linkDelay DropTail"								+ br +
