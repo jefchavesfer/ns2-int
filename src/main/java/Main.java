@@ -36,13 +36,19 @@ class Main {
         EntranceParser xmlParser = new EntranceParser(paramFileRadical);
         List<SimulationParams> simulationProfiles = xmlParser.parseXML();
 
+        // File for the convergence report
+        FileWriter convergenceReport = new FileWriter("convergenceReport.txt");
+        int profileIndex = 0;
         for (SimulationParams simulationProfile : simulationProfiles) {
+            String strLog =
+                    "\n===========================================================================\n"
+                            + "Executing simulation profile " + profileIndex + "\n"
+                            + "===========================================================================\n";
+            log.info(strLog);
+            convergenceReport.write(strLog);
 
             // putting flow data inside simulation params
             MakeFlows.make(simulationProfile);
-
-            // File for the convergence report
-            FileWriter convergenceReport = new FileWriter("convergenceReport.txt");
 
             while (!simulationProfile.isConverged()) {
 
@@ -101,7 +107,8 @@ class Main {
                 simulationProfile = simuIterator.generateNewSimulationParams();
                 convergenceReport.flush();
             }
-            convergenceReport.close();
+            profileIndex++;
         }
+        convergenceReport.close();
     }
 }

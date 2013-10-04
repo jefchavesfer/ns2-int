@@ -2,6 +2,8 @@
 package io.java;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 
@@ -10,6 +12,7 @@ import java.util.Map;
  */
 public class SimulationParams {
 
+    private static int historySize = 3;
     private String wiredFileDiscriminator;
     private String wirelessFileDiscriminator;
     private Integer initialTime;
@@ -25,8 +28,10 @@ public class SimulationParams {
     private Integer wiredQueueSize;
 
     private Float timeInterval;
-    private Float appThroughput;
-    private String wiredBandwidth;
+    private List<Float> appThroughput = new ArrayList<Float>();
+    private List<Float> deliveryRateError = new ArrayList<Float>();
+    private List<String> wiredBandwidth = new ArrayList<String>();
+    private List<Float> meanDelayError = new ArrayList<Float>();
     private Float dissimilarityCoefficient;
     private Float maxRelDifDeliveryRate;
     private Float maxRelDifMeanDelay;
@@ -39,6 +44,16 @@ public class SimulationParams {
      * @return appThroughput
      */
     public Float getAppThroughput() {
+        if (this.appThroughput.size() == 0) {
+            return null;
+        }
+        return this.appThroughput.get(this.appThroughput.size() - 1);
+    }
+
+    /**
+     * @return all wired appThroughput stocked
+     */
+    public List<Float> getAppThroughputHistory() {
         return this.appThroughput;
     }
 
@@ -46,21 +61,99 @@ public class SimulationParams {
      * @param appThroughput
      */
     public void setAppThroughput(Float appThroughput) {
+        this.appThroughput.add(appThroughput);
+        if (this.appThroughput.size() > SimulationParams.historySize) {
+            this.appThroughput.remove(0);
+        }
+    }
+
+    /**
+     * @param appThroughput
+     */
+    public void setAppThroughputHistory(List<Float> appThroughput) {
         this.appThroughput = appThroughput;
+    }
+
+    /**
+     * @return all wired appThroughput stocked
+     */
+    public List<Float> getDeliveryRateError() {
+        return this.deliveryRateError;
+    }
+
+    /**
+     * @param deliveryRateError
+     */
+    public void setDeliveryRateError(Float deliveryRateError) {
+        this.deliveryRateError.add(deliveryRateError);
+        if (this.deliveryRateError.size() > SimulationParams.historySize) {
+            this.deliveryRateError.remove(0);
+        }
+    }
+
+    /**
+     * @param deliveryRateError
+     */
+    public void setDeliveryRateError(List<Float> deliveryRateError) {
+        this.deliveryRateError = deliveryRateError;
+    }
+
+    /**
+     * @return all wired bandwitdth stocked
+     */
+    public List<String> getWiredBandwidthHistory() {
+        return this.wiredBandwidth;
     }
 
     /**
      * @return wiredBandwidth
      */
     public String getWiredBandwidth() {
-        return this.wiredBandwidth;
+        if (this.wiredBandwidth.size() == 0) {
+            return null;
+        }
+        return this.wiredBandwidth.get(this.wiredBandwidth.size() - 1);
     }
 
     /**
      * @param wiredBandwidth
      */
     public void setWiredBandwidth(String wiredBandwidth) {
+        this.wiredBandwidth.add(wiredBandwidth);
+        if (this.wiredBandwidth.size() > SimulationParams.historySize) {
+            this.wiredBandwidth.remove(0);
+        }
+    }
+
+    /**
+     * @param wiredBandwidth
+     */
+    public void setWiredBandwidthHistory(List<String> wiredBandwidth) {
         this.wiredBandwidth = wiredBandwidth;
+    }
+
+    /**
+     * @return all wired appThroughput stocked
+     */
+    public List<Float> getMeanDelayError() {
+        return this.meanDelayError;
+    }
+
+    /**
+     * @param meanDelayError
+     */
+    public void setMeanDelayError(Float meanDelayError) {
+        this.meanDelayError.add(meanDelayError);
+        if (this.meanDelayError.size() > SimulationParams.historySize) {
+            this.meanDelayError.remove(0);
+        }
+    }
+
+    /**
+     * @param meanDelayError
+     */
+    public void setMeanDelayError(List<Float> meanDelayError) {
+        this.meanDelayError = meanDelayError;
     }
 
     /**
@@ -348,8 +441,8 @@ public class SimulationParams {
         cloned.setWirelessQueueSize(this.wirelessQueueSize);
         cloned.setWiredQueueSize(this.wiredQueueSize);
 
-        cloned.setAppThroughput(this.appThroughput);
-        cloned.setWiredBandwidth(this.wiredBandwidth);
+        cloned.setAppThroughputHistory(this.appThroughput);
+        cloned.setWiredBandwidthHistory(this.wiredBandwidth);
         cloned.setDissimilarityCoefficient(this.dissimilarityCoefficient);
         cloned.setMaxRelDifDeliveryRate(this.maxRelDifDeliveryRate);
         cloned.setMaxRelDifMeanDelay(this.maxRelDifMeanDelay);
@@ -358,6 +451,8 @@ public class SimulationParams {
         cloned.setInternalFlowMap(this.internalFlowMap);
         cloned.setExternalFlowMap(this.externalFlowMap);
 
+        cloned.setMeanDelayError(this.meanDelayError);
+        cloned.setDeliveryRateError(this.deliveryRateError);
         return cloned;
     }
 }

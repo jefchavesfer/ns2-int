@@ -95,7 +95,9 @@ public class SimulationIterator {
 
         Float errRelDelivery =
                 (wirelessSimulationDeliveryRate - wiredSimulationDeliveryRate) / wiredSimulationDeliveryRate;
+        Float correctionFactorDelivery = errRelDelivery;
         Float errRelDelay = (wirelessSimulationDelay - wiredSimulationDelay) / wiredSimulationDelay;
+        Float correctionFactorDelay = errRelDelay;
 
         String strLog = null;
         strLog =
@@ -110,7 +112,20 @@ public class SimulationIterator {
             strLog = "STATE: trying to balance devivery rates\n";
             this.log.info(strLog);
             this.convergenceReport.write(strLog);
-            newSimulationParams.setAppThroughput(this.simulationParams.getAppThroughput() * (1 + errRelDelivery));
+            if (this.simulationParams.getDeliveryRateError().size() > 0) {
+                Float prevErrRelDelivery = this.simulationParams.getDeliveryRateError().get(0);
+                Float relErrorTest = (errRelDelivery - prevErrRelDelivery) / prevErrRelDelivery;
+                if (this.fabs(relErrorTest) < (2 * this.simulationParams.getMaxRelDifDeliveryRate())) {
+                    if (correctionFactorDelivery > 0) {
+                        correctionFactorDelivery = 2 * this.simulationParams.getMaxRelDifDeliveryRate();
+                    } else {
+                        correctionFactorDelivery = -2 * this.simulationParams.getMaxRelDifDeliveryRate();
+                    }
+                }
+            }
+            newSimulationParams.setDeliveryRateError(correctionFactorDelivery);
+            Float newThroughput = this.simulationParams.getAppThroughput() * (1 + correctionFactorDelivery);
+            newSimulationParams.setAppThroughput(newThroughput);
         } else {
             strLog = "STATE: trying to balance mean delays\n";
             this.log.info(strLog);
@@ -120,7 +135,23 @@ public class SimulationIterator {
                 Float wiredBandwidth =
                         Float.valueOf(this.simulationParams.getWiredBandwidth().substring(0,
                                 this.simulationParams.getWiredBandwidth().length() - 2));
-                newSimulationParams.setWiredBandwidth((wiredBandwidth * (1 - errRelDelay)) + "Mb");
+                if (this.simulationParams.getMeanDelayError().size() > 0) {
+                    Float prevMeanDelayError = this.simulationParams.getMeanDelayError().get(0);
+                    Float relErrorTest = (errRelDelay - prevMeanDelayError) / prevMeanDelayError;
+                    if (this.fabs(relErrorTest) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
+                        if (errRelDelay > 0) {
+                            correctionFactorDelay = 2 * this.simulationParams.getMaxRelDifMeanDelay();
+                        } else {
+                            correctionFactorDelay = -2 * this.simulationParams.getMaxRelDifMeanDelay();
+                        }
+                    }
+                }
+                newSimulationParams.setMeanDelayError(correctionFactorDelay);
+                Float newWiredBandwidth = (wiredBandwidth * (1 - correctionFactorDelay));
+                if (newWiredBandwidth < 0) {
+                    newWiredBandwidth = 0.0001f;
+                }
+                newSimulationParams.setWiredBandwidth(newWiredBandwidth + "Mb");
             } else {
                 // WIN
                 strLog = "STATE: FOUND balanced parameters";
@@ -130,9 +161,11 @@ public class SimulationIterator {
             }
         }
         strLog =
-                "Relative error for delivery rate " + errRelDelivery + "\n" + "New app throughput "
-                        + newSimulationParams.getAppThroughput() + "\n" + "Relative error for mean delay    "
-                        + errRelDelay + "\n" + "New wired bandwidth " + newSimulationParams.getWiredBandwidth() + "\n";
+                "Relative error for delivery rate " + errRelDelivery + " correctionFactor " + correctionFactorDelivery
+                        + "\n" + "New app throughput " + newSimulationParams.getAppThroughput() + "\n"
+                        + "Relative error for mean delay    " + errRelDelay + " correction Factor "
+                        + correctionFactorDelay + "\n" + "New wired bandwidth "
+                        + newSimulationParams.getWiredBandwidth() + "\n";
         this.log.info(strLog);
         this.convergenceReport.write(strLog);
         return newSimulationParams;

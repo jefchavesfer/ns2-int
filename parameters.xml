@@ -17,7 +17,7 @@
 		<wirelessQueueSize>50</wirelessQueueSize>
 		<wirelessFileDiscriminator>simulacaoSemFio</wirelessFileDiscriminator>
 		<maxRelDifDeliveryRate>0.02</maxRelDifDeliveryRate>
-		<maxRelDifMeanDelay>0.02</maxRelDifMeanDelay>
+		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 	</simulationProfile>
 
 	<simulationProfile>
@@ -37,6 +37,6 @@
 		<wirelessQueueSize>50</wirelessQueueSize>
 		<wirelessFileDiscriminator>simulacaoSemFio</wirelessFileDiscriminator>
 		<maxRelDifDeliveryRate>0.02</maxRelDifDeliveryRate>
-		<maxRelDifMeanDelay>0.02</maxRelDifMeanDelay>
+		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 	</simulationProfile>
 </simulationSchema>
