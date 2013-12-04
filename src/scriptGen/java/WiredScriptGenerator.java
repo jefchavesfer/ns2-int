@@ -7,6 +7,7 @@ import io.java.SimulationParams;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Map;
 
 
@@ -33,6 +34,7 @@ public class WiredScriptGenerator {
     }
 
     private void writeSimulation() throws IOException{
+                DecimalFormat df = new DecimalFormat("#.###");
 		this.scriptFile.write(																									 											  br +
 		        "set nc " + this.simulationParams.getNumberOfClusters() + " ;# number of clusters" + br +
 			"set nn " + this.simulationParams.getNumberOfNodesInCluster() + " ;# total number of src/router nodes in each cluster"	+ br +
@@ -60,7 +62,7 @@ public class WiredScriptGenerator {
 
 			"#CBR parameters" + br +																																	
 			"set cbrPacketSize " + this.simulationParams.getPacketSize() + br +																						
-			"set cbrPacketInterval " + this.simulationParams.getAppThroughput() + br + br +																					
+			"set cbrPacketInterval " + df.format(1.0f/this.simulationParams.getAppThroughput()) + br + br +																					
 																			
 			"#NoC position (center of the toplogy)"	+ br +
 			"set xCluster [expr ($x + 1) / 2 - 1]" + br +

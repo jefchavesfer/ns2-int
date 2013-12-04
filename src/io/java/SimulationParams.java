@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class SimulationParams {
 
-    private static int historySize = 3;
+    private static int historySize = 2;
     private String wiredFileDiscriminator;
     private String wirelessFileDiscriminator;
     private Integer initialTime;
@@ -86,7 +86,7 @@ public class SimulationParams {
      */
     public void setDeliveryRateError(Float deliveryRateError) {
         this.deliveryRateError.add(deliveryRateError);
-        if (this.deliveryRateError.size() > SimulationParams.historySize) {
+        if (this.deliveryRateError.size() > (SimulationParams.historySize - 1)) {
             this.deliveryRateError.remove(0);
         }
     }
@@ -144,7 +144,7 @@ public class SimulationParams {
      */
     public void setMeanDelayError(Float meanDelayError) {
         this.meanDelayError.add(meanDelayError);
-        if (this.meanDelayError.size() > SimulationParams.historySize) {
+        if (this.meanDelayError.size() > (SimulationParams.historySize - 1)) {
             this.meanDelayError.remove(0);
         }
     }
@@ -420,6 +420,16 @@ public class SimulationParams {
      */
     public void setExternalFlowMap(Map<NodeData, NodeData> externalFlowMap) {
         this.externalFlowMap = externalFlowMap;
+    }
+
+    /**
+     * Clear all historyData
+     */
+    public void clearHistory() {
+        this.appThroughput.clear();
+        this.wiredBandwidth.clear();
+        this.meanDelayError.clear();
+        this.deliveryRateError.clear();
     }
 
     @Override

@@ -7,6 +7,7 @@ import io.java.TclGeneratorSimulationData;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,14 @@ public class SimulationIterator {
             return -val;
         }
         return val;
+    }
+
+    private boolean equalsFloat(Float v1, Float v2, Float prec) {
+        Float diff = this.fabs(v1 - v2);
+        if (diff <= prec) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -108,53 +117,134 @@ public class SimulationIterator {
         this.convergenceReport.write(strLog);
 
         SimulationParams newSimulationParams = this.simulationParams.clone();
+        Float newWiredBandwidth = null;
+        Float newAppThroughput = null;
+
         if (this.fabs(errRelDelivery) > this.simulationParams.getMaxRelDifDeliveryRate()) {
             strLog = "STATE: trying to balance devivery rates\n";
             this.log.info(strLog);
             this.convergenceReport.write(strLog);
-            if (this.simulationParams.getDeliveryRateError().size() > 0) {
-                Float prevErrRelDelivery = this.simulationParams.getDeliveryRateError().get(0);
-                Float relErrorTest = (errRelDelivery - prevErrRelDelivery) / prevErrRelDelivery;
-                if (this.fabs(relErrorTest) < (2 * this.simulationParams.getMaxRelDifDeliveryRate())) {
-                    if (correctionFactorDelivery > 0) {
-                        correctionFactorDelivery = 2 * this.simulationParams.getMaxRelDifDeliveryRate();
-                    } else {
-                        correctionFactorDelivery = -2 * this.simulationParams.getMaxRelDifDeliveryRate();
-                    }
-                }
-            }
-            newSimulationParams.setDeliveryRateError(correctionFactorDelivery);
-            Float newThroughput = this.simulationParams.getAppThroughput() * (1 + correctionFactorDelivery);
-            newSimulationParams.setAppThroughput(newThroughput);
-        } else {
-            strLog = "STATE: trying to balance mean delays\n";
-            this.log.info(strLog);
+
+            strLog = "Tamanho erro delivery: " + this.simulationParams.getDeliveryRateError().size() + "\n";
             this.convergenceReport.write(strLog);
-            // here we try to lower the channel width in order to balance the mean delay
-            if (this.fabs(errRelDelay) > this.simulationParams.getMaxRelDifMeanDelay()) {
-                Float wiredBandwidth =
-                        Float.valueOf(this.simulationParams.getWiredBandwidth().substring(0,
-                                this.simulationParams.getWiredBandwidth().length() - 2));
-                if (this.simulationParams.getMeanDelayError().size() > 0) {
-                    Float prevMeanDelayError = this.simulationParams.getMeanDelayError().get(0);
-                    Float relErrorTest = (errRelDelay - prevMeanDelayError) / prevMeanDelayError;
-                    if (this.fabs(relErrorTest) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
-                        if (errRelDelay > 0) {
-                            correctionFactorDelay = 2 * this.simulationParams.getMaxRelDifMeanDelay();
+            this.log.info(strLog);
+
+            strLog = "Tamanho app throughput: " + this.simulationParams.getAppThroughputHistory().size() + "\n";
+            this.convergenceReport.write(strLog);
+            this.log.info(strLog);
+
+            Float appThroughput = this.simulationParams.getAppThroughput();
+            if (correctionFactorDelivery >= 1.0f) {
+                correctionFactorDelivery = 0.8f;
+            } else if (correctionFactorDelivery <= -1.0f) {
+                correctionFactorDelivery = -0.8f;
+            } else if (this.simulationParams.getDeliveryRateError().size() > 0) {
+                Integer lastErrorIndex = this.simulationParams.getDeliveryRateError().size() - 1;
+                Float lastError = this.simulationParams.getDeliveryRateError().get(lastErrorIndex);
+                if ((lastError * errRelDelivery) < 0) {
+                    Integer lastAppThroughputIndex = this.simulationParams.getAppThroughputHistory().size();
+                    Float previousAppThroughput =
+                            Float.valueOf(this.simulationParams.getAppThroughputHistory().get(
+                                    lastAppThroughputIndex - 2));
+                    // errors with different signals
+                    newAppThroughput = (previousAppThroughput + appThroughput) / 2;
+                    // clean history and error history
+                    newSimulationParams.getAppThroughputHistory().clear();
+                    newSimulationParams.getDeliveryRateError().clear();
+                } else {
+                    // Float relErrorTest = (errRelDelivery - lastError) / lastError;
+                    if (this.fabs(errRelDelivery) < (2 * this.simulationParams.getMaxRelDifDeliveryRate())) {
+                        if (correctionFactorDelivery > 0) {
+                            correctionFactorDelivery = 2 * this.simulationParams.getMaxRelDifDeliveryRate();
                         } else {
-                            correctionFactorDelay = -2 * this.simulationParams.getMaxRelDifMeanDelay();
+                            correctionFactorDelivery = -2 * this.simulationParams.getMaxRelDifDeliveryRate();
                         }
                     }
                 }
-                newSimulationParams.setMeanDelayError(correctionFactorDelay);
-                Float newWiredBandwidth = (wiredBandwidth * (1 - correctionFactorDelay));
-                if (newWiredBandwidth < 0) {
-                    newWiredBandwidth = 0.0001f;
+            }
+            DecimalFormat df = new DecimalFormat("#.###");
+            if (newAppThroughput == null) {
+                newSimulationParams.setDeliveryRateError(correctionFactorDelivery);
+                newAppThroughput = appThroughput * (1 + correctionFactorDelivery);
+                if (this.equalsFloat(newAppThroughput, appThroughput, 0.001f)) {
+                    newAppThroughput = appThroughput + correctionFactorDelay;
                 }
-                newSimulationParams.setWiredBandwidth(newWiredBandwidth + "Mb");
+                if (newAppThroughput < 0) {
+                    newAppThroughput = 0.0001f;
+                }
+            }
+            String strNewAppThroughput = df.format(newAppThroughput);
+            newSimulationParams.setAppThroughput(Float.valueOf(strNewAppThroughput));
+        } else {
+            // here we try to lower the channel width in order to balance the mean delay
+            if (this.fabs(errRelDelay) > this.simulationParams.getMaxRelDifMeanDelay()) {
+                strLog = "STATE: trying to balance mean delays\n";
+                this.log.info(strLog);
+                this.convergenceReport.write(strLog);
+
+                strLog = "Tamanho erro delay: " + this.simulationParams.getMeanDelayError().size() + "\n";
+                this.convergenceReport.write(strLog);
+                this.log.info(strLog);
+                strLog = "Tamanho banda wired: " + this.simulationParams.getWiredBandwidthHistory().size() + "\n";
+                this.convergenceReport.write(strLog);
+                this.log.info(strLog);
+
+                Float wiredBandwidth =
+                        Float.valueOf(this.simulationParams.getWiredBandwidth().substring(0,
+                                this.simulationParams.getWiredBandwidth().length() - 2));
+                if (correctionFactorDelay >= 1.0f) {
+                    // correction factor is too big
+                    correctionFactorDelay = 0.8f;
+                } else if (correctionFactorDelay <= -1.0f) {
+                    // correction factor is too small
+                    correctionFactorDelay = -0.8f;
+                } else if (this.simulationParams.getMeanDelayError().size() > 0) {
+                    // has history data
+                    Integer lastErrorIndex = this.simulationParams.getMeanDelayError().size() - 1;
+                    Float lastError = this.simulationParams.getMeanDelayError().get(lastErrorIndex);
+                    if ((lastError * errRelDelay) < 0) {
+                        Integer lastWiredBandWidthIndex = this.simulationParams.getWiredBandwidthHistory().size();
+                        Float previousWiredBandwidth =
+                                Float.valueOf(this.simulationParams
+                                        .getWiredBandwidthHistory()
+                                        .get(lastWiredBandWidthIndex - 2)
+                                        .substring(
+                                                0,
+                                                this.simulationParams.getWiredBandwidthHistory()
+                                                        .get(lastWiredBandWidthIndex - 2).length() - 2));
+                        // errors with different signals
+                        newWiredBandwidth = (previousWiredBandwidth + wiredBandwidth) / 2;
+                        // clean history and error history
+                        newSimulationParams.getWiredBandwidthHistory().clear();
+                        newSimulationParams.getMeanDelayError().clear();
+                    } else {
+                        // Float relErrorTest = (errRelDelay - lastError) / lastError;
+                        // the error difference is too small
+                        if (this.fabs(errRelDelay) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
+                            if (errRelDelay > 0) {
+                                correctionFactorDelay = 2 * this.simulationParams.getMaxRelDifMeanDelay();
+                            } else {
+                                correctionFactorDelay = -2 * this.simulationParams.getMaxRelDifMeanDelay();
+                            }
+                        }
+                    }
+                }
+                DecimalFormat df = new DecimalFormat("#.###");
+                if (newWiredBandwidth == null) {
+                    newSimulationParams.setMeanDelayError(correctionFactorDelay);
+                    newWiredBandwidth = (wiredBandwidth * (1 - correctionFactorDelay));
+                    if (this.equalsFloat(wiredBandwidth, newWiredBandwidth, 0.001f)) {
+                        newWiredBandwidth = wiredBandwidth - correctionFactorDelay;
+                    }
+                    if (newWiredBandwidth < 0) {
+                        newWiredBandwidth = 0.0001f;
+                    }
+                }
+                String strNewWiredBandWidth = df.format(newWiredBandwidth);
+                newSimulationParams.setWiredBandwidth(strNewWiredBandWidth + "Mb");
             } else {
                 // WIN
-                strLog = "STATE: FOUND balanced parameters";
+                strLog = "STATE: FOUND balanced parameters\n";
                 this.log.info(strLog);
                 this.convergenceReport.write(strLog);
                 newSimulationParams.setConverged(true);

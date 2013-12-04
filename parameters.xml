@@ -7,7 +7,7 @@
 		<externalTraffic>0.5</externalTraffic>
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
-		<appThroughput>0.023</appThroughput>
+		<appThroughput>0.3</appThroughput>
 		<wiredBandwidth>0.15Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>8</wiredQueueSize>
@@ -27,7 +27,7 @@
 		<externalTraffic>0.4</externalTraffic>
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
-		<appThroughput>0.023</appThroughput>
+		<appThroughput>0.3</appThroughput>
 		<wiredBandwidth>0.15Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>8</wiredQueueSize>
@@ -39,4 +39,65 @@
 		<maxRelDifDeliveryRate>0.02</maxRelDifDeliveryRate>
 		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 	</simulationProfile>
+	
+	<simulationProfile>
+		<numberOfNodesInCluster>25</numberOfNodesInCluster>
+		<numberOfClusters>9</numberOfClusters>
+		<internalTraffic>0.1</internalTraffic>
+		<externalTraffic>0.1</externalTraffic>
+		<packetSize>512</packetSize>
+		<timeInterval>5.0</timeInterval>
+		<appThroughput>0.023</appThroughput>
+		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<linkDelay>0.1ms</linkDelay>
+		<wiredQueueSize>2</wiredQueueSize>
+		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
+		<initialTime>0</initialTime>
+		<endTime>200</endTime>
+		<wirelessQueueSize>2</wirelessQueueSize>
+		<wirelessFileDiscriminator>simulacaoSemFio</wirelessFileDiscriminator>
+		<maxRelDifDeliveryRate>0.02</maxRelDifDeliveryRate>
+		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
+	</simulationProfile>
+	
+	<simulationProfile>
+		<numberOfNodesInCluster>25</numberOfNodesInCluster>
+		<numberOfClusters>9</numberOfClusters>
+		<internalTraffic>0.4</internalTraffic>
+		<externalTraffic>0.5</externalTraffic>
+		<packetSize>512</packetSize>
+		<timeInterval>5.0</timeInterval>
+		<appThroughput>0.023</appThroughput>
+		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<linkDelay>0.1ms</linkDelay>
+		<wiredQueueSize>2</wiredQueueSize>
+		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
+		<initialTime>0</initialTime>
+		<endTime>200</endTime>
+		<wirelessQueueSize>2</wirelessQueueSize>
+		<wirelessFileDiscriminator>simulacaoSemFio</wirelessFileDiscriminator>
+		<maxRelDifDeliveryRate>0.02</maxRelDifDeliveryRate>
+		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
+	</simulationProfile>
+	
+	<simulationProfile>
+		<numberOfNodesInCluster>25</numberOfNodesInCluster>
+		<numberOfClusters>9</numberOfClusters>
+		<internalTraffic>0.3</internalTraffic>
+		<externalTraffic>0.3</externalTraffic>
+		<packetSize>512</packetSize>
+		<timeInterval>5.0</timeInterval>
+		<appThroughput>0.023</appThroughput>
+		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<linkDelay>0.1ms</linkDelay>
+		<wiredQueueSize>2</wiredQueueSize>
+		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
+		<initialTime>0</initialTime>
+		<endTime>200</endTime>
+		<wirelessQueueSize>2</wirelessQueueSize>
+		<wirelessFileDiscriminator>simulacaoSemFio</wirelessFileDiscriminator>
+		<maxRelDifDeliveryRate>0.02</maxRelDifDeliveryRate>
+		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
+	</simulationProfile>
+	
 </simulationSchema>
