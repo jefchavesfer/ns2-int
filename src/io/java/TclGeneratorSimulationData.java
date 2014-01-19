@@ -16,6 +16,7 @@ import tree.java.TreeDataInfo;
 public class TclGeneratorSimulationData {
 
     private String fileRadical;
+    private String wirelessProtocol;
     private Map<Integer, TreeDataInfo> packetData;
     private Map<String, FlowNode> flowData;
     private Map<String, DataNode> queueData;
@@ -153,5 +154,13 @@ public class TclGeneratorSimulationData {
 
     public void setPacketSize(Integer packetSize) {
         this.packetSize = packetSize;
+    }
+
+    public String getWirelessProtocol() {
+        return this.wirelessProtocol;
+    }
+
+    public void setWirelessProtocol(String wirelessProtocol) {
+        this.wirelessProtocol = wirelessProtocol;
     }
 }

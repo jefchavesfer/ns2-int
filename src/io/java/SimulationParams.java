@@ -13,10 +13,13 @@ import java.util.Map;
 public class SimulationParams {
 
     private static int historySize = 2;
+
     private String wiredFileDiscriminator;
     private String wirelessFileDiscriminator;
+    private String wirelessProtocol;
     private Integer initialTime;
     private Integer endTime;
+    private Integer iterations;
 
     private Integer numberOfNodesInCluster;
     private Integer numberOfClusters;
@@ -35,6 +38,8 @@ public class SimulationParams {
     private Float dissimilarityCoefficient;
     private Float maxRelDifDeliveryRate;
     private Float maxRelDifMeanDelay;
+    private Float convergedMeanDelay;
+    private SimulationApproach simulationApproach;
     private Boolean converged = Boolean.FALSE;
 
     private Map<NodeData, NodeData> internalFlowMap;
@@ -255,6 +260,34 @@ public class SimulationParams {
     }
 
     /**
+     * @return SimulationApproach
+     */
+    public SimulationApproach getSimulationApproach() {
+        return this.simulationApproach;
+    }
+
+    /**
+     * @param simulationApproach
+     */
+    public void setSimulationApproach(SimulationApproach simulationApproach) {
+        this.simulationApproach = simulationApproach;
+    }
+
+    /**
+     * @return convergedMeanDelay
+     */
+    public Float getConvergedMeanDelay() {
+        return this.convergedMeanDelay;
+    }
+
+    /**
+     * @param convergedMeanDelay
+     */
+    public void setConvergedMeanDelay(Float convergedMeanDelay) {
+        this.convergedMeanDelay = convergedMeanDelay;
+    }
+
+    /**
      * @return converged
      */
     public Boolean isConverged() {
@@ -423,6 +456,34 @@ public class SimulationParams {
     }
 
     /**
+     * @return wirelessProtocol
+     */
+    public String getWirelessProtocol() {
+        return this.wirelessProtocol;
+    }
+
+    /**
+     * @param wirelessProtocol
+     */
+    public void setWirelessProtocol(String wirelessProtocol) {
+        this.wirelessProtocol = wirelessProtocol;
+    }
+
+    /**
+     * @return maxIterations
+     */
+    public Integer getIterations() {
+        return this.iterations;
+    }
+
+    /**
+     * @param iterations
+     */
+    public void setIterations(Integer iterations) {
+        this.iterations = iterations;
+    }
+
+    /**
      * Clear all historyData
      */
     public void clearHistory() {
@@ -439,6 +500,7 @@ public class SimulationParams {
 
         cloned.setWiredFileDiscriminator(this.wiredFileDiscriminator);
         cloned.setWirelessFileDiscriminator(this.wirelessFileDiscriminator);
+        cloned.setWirelessProtocol(this.wirelessProtocol);
         cloned.setInitialTime(this.initialTime);
         cloned.setEndTime(this.endTime);
         cloned.setTimeInterval(this.timeInterval);
@@ -450,6 +512,7 @@ public class SimulationParams {
         cloned.setLinkDelay(this.linkDelay);
         cloned.setWirelessQueueSize(this.wirelessQueueSize);
         cloned.setWiredQueueSize(this.wiredQueueSize);
+        cloned.setIterations(this.iterations);
 
         cloned.setAppThroughputHistory(this.appThroughput);
         cloned.setWiredBandwidthHistory(this.wiredBandwidth);
@@ -463,6 +526,7 @@ public class SimulationParams {
 
         cloned.setMeanDelayError(this.meanDelayError);
         cloned.setDeliveryRateError(this.deliveryRateError);
+        cloned.setSimulationApproach(this.simulationApproach);
         return cloned;
     }
 }

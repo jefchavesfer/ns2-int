@@ -23,7 +23,7 @@ import scriptGen.java.WiredScriptGenerator;
  */
 class Main {
 
-    private static String paramFileRadical = "parameters";
+    private static String paramFileRadical = "parametersOT";
 
     /**
      * @param args
@@ -38,8 +38,11 @@ class Main {
 
         // File for the convergence report
         FileWriter convergenceReport = new FileWriter("convergenceReport.txt");
+        // Plot Data File
+        FileWriter plotDataFile = new FileWriter("plotData.txt");
         int profileIndex = 0;
         for (SimulationParams simulationProfile : simulationProfiles) {
+            simulationProfile.setIterations(0);
             String strLog =
                     "\n===========================================================================\n"
                             + "Executing simulation profile " + profileIndex + "\n"
@@ -67,7 +70,7 @@ class Main {
                 List<TclGeneratorSimulationData> wiredSimulationData = wiredTrFile.getTclGenSimulationData();
                 int numberOfScripts = wiredSimulationData.size();
                 WirelessNodeSimulationProcessor.createSimulationFiles(wiredSimulationData,
-                        simulationProfile.getWirelessFileDiscriminator());
+                        simulationProfile.getWirelessFileDiscriminator(), simulationProfile.getWirelessProtocol());
 
                 for (int i = 0; i < numberOfScripts; i++) {
                     log.info("\n===========================================================================\n"
@@ -107,8 +110,19 @@ class Main {
                 simulationProfile = simuIterator.generateNewSimulationParams();
                 convergenceReport.flush();
             }
+            String profileData =
+                    "Profile: " + profileIndex + "\n" + "Cluster Size:   "
+                            + simulationProfile.getNumberOfNodesInCluster() + "\n" + "Cluster Number: "
+                            + simulationProfile.getNumberOfClusters() + "\n"
+                            + "Internal Traffic External Traffic WiredBandWitdth AppThroughput MeanDelay" + "\n"
+                            + simulationProfile.getInternalTraffic() + " " + simulationProfile.getExternalTraffic()
+                            + " " + simulationProfile.getWiredBandwidth() + " " + simulationProfile.getAppThroughput()
+                            + " " + simulationProfile.getConvergedMeanDelay() + "\n" + "\n";
+            plotDataFile.write(profileData);
+            plotDataFile.flush();
             profileIndex++;
         }
         convergenceReport.close();
+        plotDataFile.close();
     }
 }

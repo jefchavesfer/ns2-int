@@ -7,15 +7,22 @@ import java.util.Map;
 
 import tree.java.DataNode;
 
+/**
+ * @author jchaves
+ */
 public class ScriptGeneratorDSR {
-	static String br = "\r\n";
-	FileWriter scriptFile;
+	private static String br = "\r\n";
+	private FileWriter scriptFile;
 	private TclGeneratorSimulationData data;
 	
+	/**
+	 * @param data
+	 * @throws IOException
+	 */
 	public ScriptGeneratorDSR(TclGeneratorSimulationData data) throws IOException{
-		   	this.data = data;
-		    this.scriptFile = new FileWriter(this.data.getFileRadical() + ".tcl");
-	   }
+	    this.data = data;
+	    this.scriptFile = new FileWriter(this.data.getFileRadical() + ".tcl");
+	}
 	
 	private void writeHeader() throws IOException{
 		this.scriptFile.write(																					  br +
@@ -41,7 +48,7 @@ public class ScriptGeneratorDSR {
 				"set opt(stop) " + this.data.getTf() + "	         ;# simulation time"				+ br +
 				"set opt(tr)   " + this.data.getFileRadical() + "    ;# trace file"	                    + br +
 				"#protocol"                 															+ br +
-				"set opt(rp)             DSR"                                   						+ br +
+				"set opt(rp) "  + this.data.getWirelessProtocol()                                 						+ br +
 																										  br +
  				"set pos_x         0"																	+ br +
 				"set pos_y         0"																	+ br +
@@ -166,6 +173,9 @@ public class ScriptGeneratorDSR {
 		);
 	}
 	
+	/**
+	 * @throws IOException
+	 */
 	public void generateScript() throws IOException{
 		this.writeHeader();
 		int iFlow = 0;

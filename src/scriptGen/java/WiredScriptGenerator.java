@@ -341,7 +341,7 @@ public class WiredScriptGenerator {
 				    
 				"   # Print some info."																																+ br +
 				"   puts \"Run nam...\""																															+ br +
-				"   exec nam " + this.simulationParams.getWiredFileDiscriminator() + ".nam "																		+ br +
+				"   # exec nam " + this.simulationParams.getWiredFileDiscriminator() + ".nam "																		+ br +
 				"}"																																					+ br +	
 
 				"#run the simulation"																																+ br +

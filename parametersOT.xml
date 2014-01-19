@@ -2,6 +2,7 @@
 <simulationSchema>
 	<simulationProfile>
 	    <wirelessProtocol>DSR</wirelessProtocol>
+	    <SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>9</numberOfNodesInCluster>
 		<numberOfClusters>4</numberOfClusters>
 		<internalTraffic>0.3</internalTraffic>
@@ -9,7 +10,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -23,6 +24,7 @@
 
 	<simulationProfile>
 	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>9</numberOfNodesInCluster>
 		<numberOfClusters>4</numberOfClusters>
 		<internalTraffic>0.4</internalTraffic>
@@ -44,6 +46,7 @@
 	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.5</internalTraffic>
@@ -65,6 +68,7 @@
 	
 	<simulationProfile>
 	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.1</internalTraffic>
@@ -85,7 +89,8 @@
 	</simulationProfile>
 	
 	<simulationProfile>
-	    <wirelessProtocol>DSR</wirelessProtocol>	
+	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>	
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.2</internalTraffic>
@@ -106,7 +111,8 @@
 	</simulationProfile>
 
 	<simulationProfile>
-	    <wirelessProtocol>DSR</wirelessProtocol>	
+	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>	
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.2</internalTraffic>
@@ -128,6 +134,7 @@
 	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.2</internalTraffic>
@@ -149,6 +156,7 @@
 	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.3</internalTraffic>
@@ -170,6 +178,7 @@
 	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.3</internalTraffic>
@@ -190,7 +199,8 @@
 	</simulationProfile>
 	
 	<simulationProfile>
-		<wirelessProtocol>DSR</wirelessProtocol>	
+		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>	
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.1</internalTraffic>
@@ -211,7 +221,8 @@
 	</simulationProfile>
 	
 	<simulationProfile>
-	    <wirelessProtocol>DSR</wirelessProtocol>	
+	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>	
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.3</internalTraffic>
@@ -233,6 +244,7 @@
 	
    <simulationProfile>
 	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.3</internalTraffic>
@@ -254,6 +266,7 @@
 	
 	<simulationProfile>
 	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.4</internalTraffic>
@@ -275,6 +288,7 @@
 	
 	<simulationProfile>
 	    <wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.4</internalTraffic>
@@ -295,7 +309,8 @@
 	</simulationProfile>	
 	
 	<simulationProfile>
-		<wirelessProtocol>DSR</wirelessProtocol>	
+		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>	
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.2</internalTraffic>
@@ -317,6 +332,7 @@
 	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.4</internalTraffic>
@@ -338,6 +354,7 @@
 	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.1</internalTraffic>
@@ -357,7 +374,8 @@
 		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 	</simulationProfile>
 	<simulationProfile>
-		<wirelessProtocol>DSR</wirelessProtocol>	
+		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>	
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.5</internalTraffic>
@@ -378,6 +396,7 @@
 	</simulationProfile>
     <simulationProfile>
     	<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 	    <numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.5</internalTraffic>
@@ -398,6 +417,7 @@
 	</simulationProfile>
     <simulationProfile>
     	<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.4</internalTraffic>
@@ -418,6 +438,7 @@
 	</simulationProfile>
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.5</internalTraffic>
@@ -438,6 +459,7 @@
 	</simulationProfile>
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.3</internalTraffic>
@@ -458,6 +480,7 @@
 	</simulationProfile>	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.2</internalTraffic>
@@ -478,6 +501,7 @@
 	</simulationProfile>	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.5</internalTraffic>
@@ -498,6 +522,7 @@
 	</simulationProfile>	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.1</internalTraffic>
@@ -518,6 +543,7 @@
 	</simulationProfile>	
 	<simulationProfile>
 		<wirelessProtocol>DSR</wirelessProtocol>
+		<SimulationApproach>ONLY_TROUGHPUT</SimulationApproach>
 		<numberOfNodesInCluster>25</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
 		<internalTraffic>0.5</internalTraffic>

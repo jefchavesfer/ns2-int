@@ -113,6 +113,11 @@ public class SimulatorEntranceXMLHandler extends DefaultHandler {
             this.simulationProfiles.lastElement().setWirelessFileDiscriminator(this.buffer);
         }
 
+        if (qName.equalsIgnoreCase("wirelessProtocol")) {
+            this.log.info("wirelessProtocol: " + this.buffer);
+            this.simulationProfiles.lastElement().setWirelessProtocol(this.buffer);
+        }
+
         if (qName.equalsIgnoreCase("maxRelDifDeliveryRate")) {
             this.log.info("maxRelDifDeliveryRate: " + this.buffer);
             this.simulationProfiles.lastElement().setMaxRelDifDeliveryRate(Float.valueOf(this.buffer));
@@ -121,6 +126,15 @@ public class SimulatorEntranceXMLHandler extends DefaultHandler {
         if (qName.equalsIgnoreCase("maxRelDifMeanDelay")) {
             this.log.info("maxRelDifMeanDelay: " + this.buffer);
             this.simulationProfiles.lastElement().setMaxRelDifMeanDelay(Float.valueOf(this.buffer));
+        }
+
+        if (qName.equalsIgnoreCase("simulationApproach")) {
+            if (this.buffer.equalsIgnoreCase(SimulationApproach.ALL.toString())) {
+                this.simulationProfiles.lastElement().setSimulationApproach(SimulationApproach.ALL);
+            } else if (this.buffer.equalsIgnoreCase(SimulationApproach.ONLY_TROUGHPUT.toString())) {
+                this.simulationProfiles.lastElement().setSimulationApproach(SimulationApproach.ONLY_TROUGHPUT);
+            }
+            this.log.info("simulationApproach: " + this.simulationProfiles.lastElement().getSimulationApproach());
         }
     }
 
