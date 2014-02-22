@@ -13,6 +13,7 @@ import java.util.Map;
 public class SimulationParams {
 
     private static int historySize = 2;
+    private static int timeOffset = 10;
 
     private String wiredFileDiscriminator;
     private String wirelessFileDiscriminator;
@@ -26,7 +27,6 @@ public class SimulationParams {
     private Float internalTraffic;
     private Float externalTraffic;
     private Integer packetSize;
-    private String linkDelay;
     private Integer wirelessQueueSize;
     private Integer wiredQueueSize;
 
@@ -34,6 +34,7 @@ public class SimulationParams {
     private List<Float> appThroughput = new ArrayList<Float>();
     private List<Float> deliveryRateError = new ArrayList<Float>();
     private List<String> wiredBandwidth = new ArrayList<String>();
+    private List<String> linkDelay = new ArrayList<String>();
     private List<Float> meanDelayError = new ArrayList<Float>();
     private Float dissimilarityCoefficient;
     private Float maxRelDifDeliveryRate;
@@ -207,13 +208,33 @@ public class SimulationParams {
      * @return linkDelay
      */
     public String getLinkDelay() {
-        return this.linkDelay;
+        if (this.linkDelay.size() == 0) {
+            return null;
+        }
+        return this.linkDelay.get(this.linkDelay.size() - 1);
     }
 
     /**
      * @param linkDelay
      */
     public void setLinkDelay(String linkDelay) {
+        this.linkDelay.add(linkDelay);
+        if (this.linkDelay.size() > SimulationParams.historySize) {
+            this.linkDelay.remove(0);
+        }
+    }
+
+    /**
+     * @return all wired bandwitdth stocked
+     */
+    public List<String> getLinkDelayHistory() {
+        return this.linkDelay;
+    }
+
+    /**
+     * @param linkDelay
+     */
+    public void setLinkDelayHistory(List<String> linkDelay) {
         this.linkDelay = linkDelay;
     }
 
@@ -372,6 +393,13 @@ public class SimulationParams {
     }
 
     /**
+     * @return timeOffset
+     */
+    public static int getTimeOffset() {
+        return timeOffset;
+    }
+
+    /**
      * @return numberOfNodesInCluster
      */
     public Integer getNumberOfNodesInCluster() {
@@ -509,13 +537,13 @@ public class SimulationParams {
         cloned.setInternalTraffic(this.internalTraffic);
         cloned.setExternalTraffic(this.externalTraffic);
         cloned.setPacketSize(this.packetSize);
-        cloned.setLinkDelay(this.linkDelay);
         cloned.setWirelessQueueSize(this.wirelessQueueSize);
         cloned.setWiredQueueSize(this.wiredQueueSize);
         cloned.setIterations(this.iterations);
 
         cloned.setAppThroughputHistory(this.appThroughput);
         cloned.setWiredBandwidthHistory(this.wiredBandwidth);
+        cloned.setLinkDelayHistory(this.linkDelay);
         cloned.setDissimilarityCoefficient(this.dissimilarityCoefficient);
         cloned.setMaxRelDifDeliveryRate(this.maxRelDifDeliveryRate);
         cloned.setMaxRelDifMeanDelay(this.maxRelDifMeanDelay);

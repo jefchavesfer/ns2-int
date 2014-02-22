@@ -4,9 +4,10 @@ package io.java;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
-import tree.java.FlowNode;
 import tree.java.DataNode;
+import tree.java.SimFlowData;
 import tree.java.TreeDataInfo;
 
 
@@ -17,28 +18,37 @@ public class TclGeneratorSimulationData {
 
     private String fileRadical;
     private String wirelessProtocol;
-    private Map<Integer, TreeDataInfo> packetData;
-    private Map<String, FlowNode> flowData;
-    private Map<String, DataNode> queueData;
-    private Map<String, DataNode> droppedData;
-    private Map<String, DataNode> throughputData;
     private Integer nn;
     private Integer nc;
     private Integer nQueue;
     private Integer packetSize;
     private Float t0;
     private Float tf;
+
+    private Integer n0;
+    private Map<Integer, TreeDataInfo> packetData;
+    private Map<String, SimFlowData> simFlowMap;
+    private Map<String, DataNode> queueData;
+    private Map<String, DataNode> droppedData;
+    private Map<String, DataNode> throughputData;
     private Float deliveryRate;
     private Float meanDelay;
+    private Integer sentPackages;
+    private Integer receivedPackages;
+    private Integer successfulDeliveries;
+    private Float sucessfulDeliveryTimeSum;
 
-    /**
-	 */
+    /**	 */
     public TclGeneratorSimulationData() {
         this.packetData = new HashMap<Integer, TreeDataInfo>();
-        this.flowData = new HashMap<String, FlowNode>();
+        this.simFlowMap = new HashMap<String, SimFlowData>();
         this.queueData = new HashMap<String, DataNode>();
         this.droppedData = new HashMap<String, DataNode>();
         this.throughputData = new HashMap<String, DataNode>();
+        this.sentPackages = 0;
+        this.receivedPackages = 0;
+        this.successfulDeliveries = 0;
+        this.sucessfulDeliveryTimeSum = 0f;
     }
 
     /**
@@ -52,12 +62,12 @@ public class TclGeneratorSimulationData {
         this.packetData = packetData;
     }
 
-    public Map<String, FlowNode> getFlowData() {
-        return this.flowData;
+    public Map<String, SimFlowData> getSimFlowMap() {
+        return this.simFlowMap;
     }
 
-    public void setFlowData(Map<String, FlowNode> flowData) {
-        this.flowData = flowData;
+    public void setSimFlowMap(Map<String, SimFlowData> simFlowMap) {
+        this.simFlowMap = simFlowMap;
     }
 
     public Map<String, DataNode> getQueueData() {
@@ -116,6 +126,14 @@ public class TclGeneratorSimulationData {
         this.tf = tf;
     }
 
+    public Integer getN0() {
+        return this.n0;
+    }
+
+    public void setN0(Integer n0) {
+        this.n0 = n0;
+    }
+
     public Float getDeliveryRate() {
         return this.deliveryRate;
     }
@@ -162,5 +180,101 @@ public class TclGeneratorSimulationData {
 
     public void setWirelessProtocol(String wirelessProtocol) {
         this.wirelessProtocol = wirelessProtocol;
+    }
+
+    public Integer getSentPackages() {
+        return this.sentPackages;
+    }
+
+    public void incrSentPackages() {
+        this.sentPackages += 1;
+    }
+
+    public void setSentPackages(Integer sentPackages) {
+        this.sentPackages = sentPackages;
+    }
+
+    public Integer getReceivedPackages() {
+        return this.receivedPackages;
+    }
+
+    public void incrReceivedPackages() {
+        this.receivedPackages += 1;
+    }
+
+    public void setReceivedPackages(Integer receivedPackages) {
+        this.receivedPackages = receivedPackages;
+    }
+
+    public Integer getSuccessfulDeliveries() {
+        return this.successfulDeliveries;
+    }
+
+    public void setSuccessfulDeliveries(Integer successfulDeliveries) {
+        this.successfulDeliveries = successfulDeliveries;
+    }
+
+    public void incrSuccessFulDeliveries() {
+        this.successfulDeliveries += 1;
+    }
+
+    public Integer getnQueue() {
+        return this.nQueue;
+    }
+
+    public void setnQueue(Integer nQueue) {
+        this.nQueue = nQueue;
+    }
+
+    public Float getSucessfulDeliveryTimeSum() {
+        return this.sucessfulDeliveryTimeSum;
+    }
+
+    public void setSucessfulDeliveryTimeSum(Float sucessfulDeliveryTimeSum) {
+        this.sucessfulDeliveryTimeSum = sucessfulDeliveryTimeSum;
+    }
+
+    public void incrSuccessfulDeliveryTimeSum(Float initialTime, Float endTime) {
+        this.sucessfulDeliveryTimeSum += (endTime - initialTime);
+    }
+
+    public void executeMetricsCalculations(Logger log) {
+        // calculating delivery rate
+        Float sentPacketsFloat = this.sentPackages.floatValue();
+        if (sentPacketsFloat != 0f) {
+            this.deliveryRate = this.receivedPackages.floatValue() / sentPacketsFloat;
+        } else {
+            this.deliveryRate = 0f;
+        }
+
+        if (log != null) {
+            log.info("deliveryRate: " + this.deliveryRate);
+        }
+        // calculating mean flow throughput
+        Float timeInterval = this.tf - this.t0;
+
+        for (Map.Entry<String, DataNode> entryFlowData : this.throughputData.entrySet()) {
+            DataNode flowData = entryFlowData.getValue();
+            if ((flowData.getNodeData() != 0) && (timeInterval != 0) && (this.deliveryRate != 0)) {
+                flowData.setFlowRate(1 / (flowData.getNodeData() / timeInterval / this.deliveryRate));
+            } else {
+                flowData.setFlowRate(0f);
+            }
+
+            if (log != null) {
+                log.info("flowRate " + entryFlowData.getKey() + ": " + flowData.getFlowRate());
+            }
+        }
+
+        // calculating mean delay
+        if (this.successfulDeliveries != 0) {
+            this.meanDelay = this.sucessfulDeliveryTimeSum / this.successfulDeliveries;
+        } else {
+            this.meanDelay = 0f;
+        }
+
+        if (log != null) {
+            log.info("meanDelay: " + this.meanDelay);
+        }
     }
 }

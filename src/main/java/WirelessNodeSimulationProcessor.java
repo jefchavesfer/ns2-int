@@ -19,18 +19,15 @@ public class WirelessNodeSimulationProcessor {
 
     /**
      * @param data
-     * @param wFileDiscriminator
-     * @param wirelessProtocol
+     * @param timeOffset
      * @throws IOException
      */
-    public static void createSimulationFiles(List<TclGeneratorSimulationData> data, String wFileDiscriminator,
-            String wirelessProtocol) throws IOException {
+    public static void createSimulationFiles(List<TclGeneratorSimulationData> data, Integer timeOffset)
+            throws IOException {
 
         for (int i = 0; i < data.size(); i++) {
             TclGeneratorSimulationData simulationPart = data.get(i);
-            simulationPart.setFileRadical(wFileDiscriminator + i);
-            simulationPart.setWirelessProtocol(wirelessProtocol);
-            ScriptGeneratorDSR scriptGenerator = new ScriptGeneratorDSR(simulationPart);
+            ScriptGeneratorDSR scriptGenerator = new ScriptGeneratorDSR(simulationPart, timeOffset);
             scriptGenerator.generateScript();
         }
 

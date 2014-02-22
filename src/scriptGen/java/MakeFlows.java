@@ -52,7 +52,7 @@ public class MakeFlows {
         nn = simulationParams.getNumberOfNodesInCluster();
         nc = simulationParams.getNumberOfClusters();
         x = (int) Math.sqrt(simulationParams.getNumberOfNodesInCluster());
-        centerClusterIndex = x / 2;
+        centerClusterIndex = ((x + 1) / 2) - 1;
         internalFlowMap = new HashMap<NodeData, NodeData>();
         externalFlowMap = new HashMap<NodeData, NodeData>();
         simulationParams.setInternalFlowMap(internalFlowMap);
@@ -113,11 +113,12 @@ public class MakeFlows {
     }
 
     private static void generateFlows() {
-        Integer nInternalFlow = (int) (internalPerc * nc);
-        Integer nExternalFlow = (int) (externalPerc * nc);
+        Integer nInternalFlow = ((int) (internalPerc * nn)) / 2;
+        Integer nExternalFlow = ((int) (externalPerc * nn)) / 2;
         Integer minimalNodes = (nInternalFlow + nExternalFlow) * 2;
 
-        if (minimalNodes > nn) {
+        if (minimalNodes > (nn - 1)) {
+            // it does not count the center node
             throw new RuntimeException("It is impossible to build this network minimalNodes > " + nn);
 
         }
@@ -179,6 +180,7 @@ public class MakeFlows {
                         if (!eligibleNodes.contains(candidateDestinationNode)) {
                             continue;
                         }
+                        eligibleNodes.remove(candidateDestinationNode);
                         externalFlowMap.put(candidateSourceNode, candidateDestinationNode);
                         tryagain = false;
                     }

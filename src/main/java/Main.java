@@ -23,7 +23,7 @@ import scriptGen.java.WiredScriptGenerator;
  */
 class Main {
 
-    private static String paramFileRadical = "parametersOT";
+    private static String paramFileRadical = "parameters";
 
     /**
      * @param args
@@ -70,7 +70,7 @@ class Main {
                 List<TclGeneratorSimulationData> wiredSimulationData = wiredTrFile.getTclGenSimulationData();
                 int numberOfScripts = wiredSimulationData.size();
                 WirelessNodeSimulationProcessor.createSimulationFiles(wiredSimulationData,
-                        simulationProfile.getWirelessFileDiscriminator(), simulationProfile.getWirelessProtocol());
+                        SimulationParams.getTimeOffset());
 
                 for (int i = 0; i < numberOfScripts; i++) {
                     log.info("\n===========================================================================\n"
@@ -81,9 +81,7 @@ class Main {
                     wirelessShell.executeCommand("killall ns");
                 }
 
-                WirelessFileProcess wirelessTrFile =
-                        new WirelessFileProcess(simulationProfile.getWirelessFileDiscriminator(), numberOfScripts,
-                                simulationProfile.getNumberOfClusters());
+                WirelessFileProcess wirelessTrFile = new WirelessFileProcess(simulationProfile, numberOfScripts);
                 wirelessTrFile.processFile();
                 List<TclGeneratorSimulationData> wirelessSimulationData = wirelessTrFile.getTclGenSimulationData();
 

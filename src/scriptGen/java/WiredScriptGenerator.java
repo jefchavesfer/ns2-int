@@ -22,6 +22,7 @@ public class WiredScriptGenerator {
     private FileWriter scriptFile;
 
     private SimulationParams simulationParams;
+    private Float deltaFlow;
 
     /**
      * @param simulationParams
@@ -30,10 +31,15 @@ public class WiredScriptGenerator {
     public WiredScriptGenerator(SimulationParams simulationParams) throws IOException {
         super();
         this.simulationParams = simulationParams;
+        this.deltaFlow =
+                (SimulationParams.getTimeOffset() * 0.8f)
+                        / (this.simulationParams.getInternalFlowMap().size() + this.simulationParams
+                                .getExternalFlowMap().size());
         this.scriptFile = new FileWriter(this.simulationParams.getWiredFileDiscriminator() + ".tcl");
     }
 
-    private void writeSimulation() throws IOException{
+    private void writeSimulation() throws IOException {
+        //@formatter:off
                 DecimalFormat df = new DecimalFormat("#.###");
 		this.scriptFile.write(																									 											  br +
 		        "set nc " + this.simulationParams.getNumberOfClusters() + " ;# number of clusters" + br +
@@ -231,12 +237,13 @@ public class WiredScriptGenerator {
 			"		}"																																			+ br +
 			"	}"																																				+ br +
 			"}" + br);																																					
-
-	                Integer idFlow = 0;
-                        this.scriptFile.write( br + "#INTERNAL FLOWS" + br);
-                        for ( Map.Entry<NodeData, NodeData> internalFlow : this.simulationParams.getInternalFlowMap().entrySet()){
-                            String source = internalFlow.getKey().toString();
-		            String destination = internalFlow.getValue().toString();
+        //@formatter:on
+        Integer idFlow = 0;
+        this.scriptFile.write(br + "#INTERNAL FLOWS" + br);
+        for (Map.Entry<NodeData, NodeData> internalFlow : this.simulationParams.getInternalFlowMap().entrySet()) {
+            String source = internalFlow.getKey().toString();
+            String destination = internalFlow.getValue().toString();
+            //@formatter:off		            
 		            this.scriptFile.write( br + 
 		                                "               #Create a UDP agent and attach it to node s(" + idFlow + ")"                                                                                                                                                                           + br +
 		                                "               puts \"Creating udp_(" + idFlow + ")\""                                                                                                                                                                                                                        + br +
@@ -265,19 +272,20 @@ public class WiredScriptGenerator {
 		                                "               puts \"Connecting udp(" + idFlow + ") sink(" + idFlow + ")\""                                                                                                                                                                                         + br +
 		                                "               $Nocns connect $udp_(" + idFlow + ") $sink_(" + idFlow + ")"                                                                                                                                                                                          + br +
 
-		                                "               set nrand_c [ expr rand() ]"                                                                                                                                                                                                                            + br +
-		                                "               puts \"cbr(" + idFlow + ") starting at $nrand_c + " + this.simulationParams.getInitialTime() +"\""                                                                                                                                                                                         + br +
-		                                "               $Nocns at [ expr "+ this.simulationParams.getInitialTime() +" + $nrand_c ] \"$cbr(" + idFlow + ") start\""                                                                                                                                                                        + br +
-		                                "               $Nocns at " + this.simulationParams.getEndTime() + ".01 \"$cbr(" + idFlow + ") stop\""    +br     
+                                                "               puts \"cbr(" + idFlow + ") starting at " + idFlow + " * " +  this.deltaFlow  +"\""                                                                                                                                                                                             + br +
+		                                "               $Nocns at " + (this.simulationParams.getInitialTime() + (idFlow * this.deltaFlow)) + " \"$cbr(" + idFlow + ") start\""                                                                                                                                                                        + br +
+		                                "               $Nocns at " + (this.simulationParams.getEndTime() + SimulationParams.getTimeOffset()) + ".01 \"$cbr(" + idFlow + ") stop\""    +br     
 		                                
 		                    );
-		                    idFlow++;
-		                }
-		                
-		                this.scriptFile.write( br + "#EXTERNAL FLOWS" + br);
-		                for ( Map.Entry<NodeData, NodeData> externalFlow : this.simulationParams.getExternalFlowMap().entrySet()){
-                                    String source = externalFlow.getKey().toString();
-                                    String destination = externalFlow.getValue().toString();
+            // @formatter:on
+            idFlow++;
+        }
+
+        this.scriptFile.write(br + "#EXTERNAL FLOWS" + br);
+        for (Map.Entry<NodeData, NodeData> externalFlow : this.simulationParams.getExternalFlowMap().entrySet()) {
+            String source = externalFlow.getKey().toString();
+            String destination = externalFlow.getValue().toString();
+            // @formatter:off
                                     this.scriptFile.write( br +
                                                 "               #Create a UDP agent and attach it to node s(" + idFlow + ")"                                                                                                                                                                           + br +
                                                 "               puts \"Creating udp_(" + idFlow + ")\""                                                                                                                                                                                                                        + br +
@@ -306,15 +314,15 @@ public class WiredScriptGenerator {
                                                 "               puts \"Connecting udp(" + idFlow + ") sink(" + idFlow + ")\""                                                                                                                                                                                         + br +
                                                 "               $Nocns connect $udp_(" + idFlow + ") $sink_(" + idFlow + ")"                                                                                                                                                                                          + br +
 
-                                                "               set nrand_c [ expr rand() ]"                                                                                                                                                                                                                            + br +
-                                                "               puts \"cbr(" + idFlow + ") starting at $nrand_c + " + this.simulationParams.getInitialTime() +"\""                                                                                                                                                                                         + br +
-                                                "               $Nocns at [ expr "+ this.simulationParams.getInitialTime() +" + $nrand_c ] \"$cbr(" + idFlow + ") start\""                                                                                                                                                                        + br +
-                                                "               $Nocns at " + this.simulationParams.getEndTime() + ".01 \"$cbr(" + idFlow + ") stop\""      +br   
-                                                
+                                              
+                                                "               puts \"cbr(" + idFlow + ") starting at " + idFlow + " * " +  this.deltaFlow  +"\""                                                                                                                                                                                         + br +
+                                                "               $Nocns at " + (this.simulationParams.getInitialTime() + (idFlow * this.deltaFlow)) + " \"$cbr(" + idFlow + ") start\""                                                                                                                                                                        + br +
+                                                "               $Nocns at " + (this.simulationParams.getEndTime() + SimulationParams.getTimeOffset()) + ".01 \"$cbr(" + idFlow + ") stop\""    +br                                       
                                     );
-                                    idFlow++;
-                                }
-		
+            //@formatter:on
+            idFlow++;
+        }
+        //@formatter:off
 		                this.scriptFile.write(
 				"########################################################"																							+ br +
 				"#"																																					+ br +
@@ -323,15 +331,15 @@ public class WiredScriptGenerator {
 				"for {set i 0} {$i < $nc} {incr i} {"																												+ br +
 				"	for { set j 0 } { $j < $x } {incr j} {"																											+ br +
 				"		for { set k 0 } {$k < $x} {incr k} {"																										+ br +
-				"				$Nocns at "+ this.simulationParams.getEndTime() + ".01 \"$r([expr $i][expr $j][expr $k]) reset\""									+ br +
+				"				$Nocns at "+ (this.simulationParams.getEndTime() + SimulationParams.getTimeOffset()) + ".01 \"$r([expr $i][expr $j][expr $k]) reset\""									+ br +
 				"		}"																																			+ br +
 				"	}"																																				+ br +
 				"}"																																					+ br +
 
 				"#$Nocns rtproto Static ;# Static routing strategy"																									+ br +
 
-				"$Nocns at " + this.simulationParams.getEndTime() + ".02 \"stop\""																					+ br +
-				"$Nocns at " + this.simulationParams.getEndTime() + ".03 \"puts \\\"NS EXITING...\\\" ; $Nocns halt\""												+ br +
+				"$Nocns at " + (this.simulationParams.getEndTime() + SimulationParams.getTimeOffset()) + ".02 \"stop\""																					+ br +
+				"$Nocns at " + (this.simulationParams.getEndTime() + SimulationParams.getTimeOffset()) + ".03 \"puts \\\"NS EXITING...\\\" ; $Nocns halt\""												+ br +
 
 				"proc stop {} {"																																	+ br +
 				"   global Nocns tracefd namtrace"																													+ br +
@@ -349,7 +357,8 @@ public class WiredScriptGenerator {
 				"$Nocns run"																																		+ br +
 				"puts \"rodei\""																																	+ br
 				);
-	}
+    //@formatter:on
+    }
 
     /**
      * @throws IOException

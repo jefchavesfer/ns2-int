@@ -32,7 +32,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>8</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -54,7 +54,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -76,7 +76,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -98,7 +98,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -120,7 +120,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -142,7 +142,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -164,7 +164,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -186,7 +186,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -208,7 +208,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -230,7 +230,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -252,7 +252,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -274,7 +274,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -296,7 +296,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -318,7 +318,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -340,7 +340,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -362,7 +362,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -383,7 +383,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -404,7 +404,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -425,7 +425,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -446,7 +446,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -467,7 +467,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -488,7 +488,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -509,7 +509,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -530,7 +530,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
@@ -551,7 +551,7 @@
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
 		<appThroughput>8.8</appThroughput>
-		<wiredBandwidth>0.15Mb</wiredBandwidth>
+		<wiredBandwidth>0.60Mb</wiredBandwidth>
 		<linkDelay>0.1ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>

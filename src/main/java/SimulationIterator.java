@@ -175,9 +175,9 @@ public class SimulationIterator {
                     this.log.info(strLog);
 
                     if (this.simulationParams.getSimulationApproach() == SimulationApproach.ONLY_TROUGHPUT) {
-                        // change ONLY appThroughput for the two variables
+                        // change meanDelay AND appThroughput
                         correctionFactorDelay =
-                                this.generateParamsToNewAppThroughputIteration(newSimulationParams, errRelDelay);
+                                this.generateParamsToNewLinkDelayIteration(newSimulationParams, errRelDelay);
                     } else {
                         // change wiredBandwidth AND appThroughput
                         correctionFactorDelay =
@@ -197,13 +197,15 @@ public class SimulationIterator {
                             + correctionFactorDelivery + "\n" + "New app throughput "
                             + newSimulationParams.getAppThroughput() + "\n" + "Relative error for mean delay    "
                             + errRelDelay + " correction Factor " + correctionFactorDelay + "\n"
-                            + "New wired bandwidth " + newSimulationParams.getWiredBandwidth() + "\n" + "tamWired "
+                            + "New wired bandwidth " + newSimulationParams.getWiredBandwidth() + "\n"
+                            + "New link delay " + newSimulationParams.getLinkDelay() + "\n" + "tamWired "
                             + this.wiredSimulationData.size() + " tamWireless " + this.wirelessSimulationData.size();
         } else {
             strLog = "There is no simulation data";
             // it is impossible iterate nothing
             newSimulationParams.setConverged(true);
         }
+        newSimulationParams.setIterations(newSimulationParams.getIterations() + 1);
         this.log.info(strLog);
         this.convergenceReport.write(strLog);
         return newSimulationParams;
@@ -228,10 +230,10 @@ public class SimulationIterator {
         } else if (this.simulationParams.getDeliveryRateError().size() > 0) {
             Integer lastErrorIndex = this.simulationParams.getDeliveryRateError().size() - 1;
             Float lastError = this.simulationParams.getDeliveryRateError().get(lastErrorIndex);
-            if ((lastError * errRelDelivery) < 0) {
+            if ((lastError * correctionFactorDelivery) < 0) {
                 Integer lastAppThroughputIndex = this.simulationParams.getAppThroughputHistory().size();
                 Float previousAppThroughput =
-                        Float.valueOf(this.simulationParams.getAppThroughputHistory().get(lastAppThroughputIndex - 2));
+                        Float.valueOf(this.simulationParams.getAppThroughputHistory().get(lastAppThroughputIndex - 1));
                 // errors with different signals
                 newAppThroughput = (previousAppThroughput + appThroughput) / 2;
                 // clean history and error history
@@ -239,7 +241,7 @@ public class SimulationIterator {
                 newSimulationParams.getDeliveryRateError().clear();
             } else {
                 // Float relErrorTest = (errRelDelivery - lastError) / lastError;
-                if (this.fabs(errRelDelivery) < (2 * this.simulationParams.getMaxRelDifDeliveryRate())) {
+                if (this.fabs(correctionFactorDelivery) < (2 * this.simulationParams.getMaxRelDifDeliveryRate())) {
                     if (correctionFactorDelivery > 0) {
                         correctionFactorDelivery = 2 * this.simulationParams.getMaxRelDifDeliveryRate();
                     } else {
@@ -275,6 +277,75 @@ public class SimulationIterator {
         return correctionFactorDelivery;
     }
 
+    private Float generateParamsToNewLinkDelayIteration(SimulationParams newSimulationParams, Float errRelDelay)
+            throws IOException {
+        Float correctionFactorLinkDelay;
+        correctionFactorLinkDelay = errRelDelay;
+        Float newLinkDelay = null;
+        Float linkDelay =
+                Float.valueOf(this.simulationParams.getLinkDelay().substring(0,
+                        this.simulationParams.getLinkDelay().length() - 2));
+        if (correctionFactorLinkDelay >= 1.0f) {
+            correctionFactorLinkDelay = 0.8f;
+        } else if (correctionFactorLinkDelay <= -1.0f) {
+            correctionFactorLinkDelay = -0.8f;
+        } else if (this.simulationParams.getMeanDelayError().size() > 0) {
+            Integer lastErrorIndex = this.simulationParams.getMeanDelayError().size() - 1;
+            Float lastError = this.simulationParams.getMeanDelayError().get(lastErrorIndex);
+            if ((lastError * correctionFactorLinkDelay) < 0) {
+                Integer lastLinkDelayIndex = this.simulationParams.getLinkDelayHistory().size();
+                Float previousLinkDelay =
+                        Float.valueOf(this.simulationParams
+                                .getLinkDelayHistory()
+                                .get(lastLinkDelayIndex - 1)
+                                .substring(
+                                        0,
+                                        this.simulationParams.getLinkDelayHistory().get(lastLinkDelayIndex - 1)
+                                                .length() - 2));
+                // errors with different signals
+                newLinkDelay = (previousLinkDelay + linkDelay) / 2;
+                // clean history and error history
+                newSimulationParams.getLinkDelayHistory().clear();
+                newSimulationParams.getMeanDelayError().clear();
+            } else {
+                // Float relErrorTest = (errRelDelivery - lastError) / lastError;
+                if (this.fabs(correctionFactorLinkDelay) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
+                    if (correctionFactorLinkDelay > 0) {
+                        correctionFactorLinkDelay = 2 * this.simulationParams.getMaxRelDifMeanDelay();
+                    } else {
+                        correctionFactorLinkDelay = -2 * this.simulationParams.getMaxRelDifMeanDelay();
+                    }
+                }
+            }
+        }
+        DecimalFormat df = new DecimalFormat(decFormat);
+        if (newLinkDelay == null) {
+            newSimulationParams.setDeliveryRateError(correctionFactorLinkDelay);
+            newLinkDelay = linkDelay * (1 + correctionFactorLinkDelay);
+            if (this.equalsFloat(newLinkDelay, linkDelay, decEqPrecision)) {
+                newLinkDelay = linkDelay + correctionFactorLinkDelay;
+            }
+            if (newLinkDelay < 0) {
+                newLinkDelay = decPrecision;
+                Integer listSize = this.simulationParams.getLinkDelayHistory().size();
+                if (listSize > 1) {
+                    if ((this.simulationParams.getLinkDelayHistory().get(listSize - 1) == (decPrecision + "ms"))
+                            && (this.simulationParams.getLinkDelayHistory().get(listSize - 1) == this.simulationParams
+                                    .getLinkDelayHistory().get(listSize - 2))) {
+                        String strLog = "There is NO smaller value for linkDelay\n";
+                        // TO DO: implement the case to low throughput if wired simulation is slower than wireless
+                        this.log.info(strLog);
+                        this.convergenceReport.write(strLog);
+                        newSimulationParams.setConverged(true);
+                    }
+                }
+            }
+        }
+        String newStrLinkDelay = df.format(newLinkDelay);
+        newSimulationParams.setLinkDelay(newStrLinkDelay + "ms");
+        return correctionFactorLinkDelay;
+    }
+
     /**
      * @param newSimulationParams
      * @param errRelDelay
@@ -298,16 +369,16 @@ public class SimulationIterator {
             // has history data
             Integer lastErrorIndex = this.simulationParams.getMeanDelayError().size() - 1;
             Float lastError = this.simulationParams.getMeanDelayError().get(lastErrorIndex);
-            if ((lastError * errRelDelay) < 0) {
+            if ((lastError * correctionFactorDelay) < 0) {
                 Integer lastWiredBandWidthIndex = this.simulationParams.getWiredBandwidthHistory().size();
                 Float previousWiredBandwidth =
                         Float.valueOf(this.simulationParams
                                 .getWiredBandwidthHistory()
-                                .get(lastWiredBandWidthIndex - 2)
+                                .get(lastWiredBandWidthIndex - 1)
                                 .substring(
                                         0,
                                         this.simulationParams.getWiredBandwidthHistory()
-                                                .get(lastWiredBandWidthIndex - 2).length() - 2));
+                                                .get(lastWiredBandWidthIndex - 1).length() - 2));
                 // errors with different signals
                 newWiredBandwidth = (previousWiredBandwidth + wiredBandwidth) / 2;
                 // clean history and error history
@@ -316,7 +387,7 @@ public class SimulationIterator {
             } else {
                 // Float relErrorTest = (errRelDelay - lastError) / lastError;
                 // the error difference is too small
-                if (this.fabs(errRelDelay) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
+                if (this.fabs(correctionFactorDelay) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
                     if (errRelDelay > 0) {
                         correctionFactorDelay = 2 * this.simulationParams.getMaxRelDifMeanDelay();
                     } else {
