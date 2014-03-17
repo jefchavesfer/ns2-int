@@ -7,7 +7,7 @@ package io.java;
  */
 public enum SimulationApproach {
     /***/
-    ONLY_TROUGHPUT,
+    ONLY_THROUGHPUT,
     /***/
     ALL
 }

@@ -53,9 +53,19 @@ public class SimulatorEntranceXMLHandler extends DefaultHandler {
             this.simulationProfiles.lastElement().setInternalTraffic(Float.valueOf(this.buffer));
         }
 
+        if (qName.equalsIgnoreCase("internalTrafficDesirableHopNumber")) {
+            this.log.info("internalTrafficDesirableHopNumber: " + this.buffer);
+            this.simulationProfiles.lastElement().setDesirableInternalHopNumber(Integer.valueOf(this.buffer));
+        }
+
         if (qName.equalsIgnoreCase("externalTraffic")) {
             this.log.info("externalTraffic: " + this.buffer);
             this.simulationProfiles.lastElement().setExternalTraffic(Float.valueOf(this.buffer));
+        }
+
+        if (qName.equalsIgnoreCase("externalTrafficDesirableHopNumber")) {
+            this.log.info("externalTrafficDesirableHopNumber: " + this.buffer);
+            this.simulationProfiles.lastElement().setDesirableExternalHopNumber(Integer.valueOf(this.buffer));
         }
 
         if (qName.equalsIgnoreCase("packetSize")) {
@@ -131,8 +141,8 @@ public class SimulatorEntranceXMLHandler extends DefaultHandler {
         if (qName.equalsIgnoreCase("simulationApproach")) {
             if (this.buffer.equalsIgnoreCase(SimulationApproach.ALL.toString())) {
                 this.simulationProfiles.lastElement().setSimulationApproach(SimulationApproach.ALL);
-            } else if (this.buffer.equalsIgnoreCase(SimulationApproach.ONLY_TROUGHPUT.toString())) {
-                this.simulationProfiles.lastElement().setSimulationApproach(SimulationApproach.ONLY_TROUGHPUT);
+            } else if (this.buffer.equalsIgnoreCase(SimulationApproach.ONLY_THROUGHPUT.toString())) {
+                this.simulationProfiles.lastElement().setSimulationApproach(SimulationApproach.ONLY_THROUGHPUT);
             }
             this.log.info("simulationApproach: " + this.simulationProfiles.lastElement().getSimulationApproach());
         }

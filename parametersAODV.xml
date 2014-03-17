@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<simulationSchema>
-				
-		<!--<simulationProfile>
+<!--<simulationProfile>
 		<wirelessProtocol>DSDV</wirelessProtocol>
 		<numberOfNodesInCluster>16</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
@@ -71,7 +68,7 @@
 		<maxRelDifDeliveryRate>0.04</maxRelDifDeliveryRate>
 		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 		<simulationApproach>ONLY_THROUGHPUT</simulationApproach>
-	</simulationProfile>			
+	</simulationProfile>	-->				
 						
 	<simulationProfile>
 		<wirelessProtocol>DSDV</wirelessProtocol>
@@ -97,6 +94,24 @@
 		<simulationApproach>ONLY_THROUGHPUT</simulationApproach>
 	</simulationProfile>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<simulationProfile>
 		<wirelessProtocol>DSDV</wirelessProtocol>
 		<numberOfNodesInCluster>16</numberOfNodesInCluster>
@@ -143,42 +158,21 @@
 		<maxRelDifDeliveryRate>0.04</maxRelDifDeliveryRate>
 		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 		<simulationApproach>ONLY_THROUGHPUT</simulationApproach>
-	</simulationProfile>-->
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	</simulationProfile>
 	
 	<simulationProfile>
-		<wirelessProtocol>DSR</wirelessProtocol>
-		<numberOfNodesInCluster>4</numberOfNodesInCluster>
-		<numberOfClusters>4</numberOfClusters>
-		<internalTraffic>0.3</internalTraffic>
+		<wirelessProtocol>AODV</wirelessProtocol>
+		<numberOfNodesInCluster>16</numberOfNodesInCluster>
+		<numberOfClusters>9</numberOfClusters>
+		<internalTraffic>0.1</internalTraffic>
 		<internalTrafficDesirableHopNumber>36</internalTrafficDesirableHopNumber>
-		<externalTraffic>0.7</externalTraffic>
+		<externalTraffic>0.8</externalTraffic>
 		<externalTrafficDesirableHopNumber>36</externalTrafficDesirableHopNumber>
 		<packetSize>512</packetSize>
 		<timeInterval>5.0</timeInterval>
-		<appThroughput>500.0</appThroughput>
+		<appThroughput>5</appThroughput>
 		<wiredBandwidth>0.25Mb</wiredBandwidth>
-		<linkDelay>0.1ms</linkDelay>
+		<linkDelay>2.0ms</linkDelay>
 		<wiredQueueSize>2</wiredQueueSize>
 		<wiredFileDiscriminator>simulacaoComFio</wiredFileDiscriminator>
 		<initialTime>0</initialTime>
@@ -190,74 +184,7 @@
 		<simulationApproach>ONLY_THROUGHPUT</simulationApproach>
 	</simulationProfile>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<!-- <simulationProfile>
+	<simulationProfile>
 		<wirelessProtocol>AODV</wirelessProtocol>
 		<numberOfNodesInCluster>16</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
@@ -717,7 +644,7 @@
 		<simulationApproach>ONLY_THROUGHPUT</simulationApproach>
 	</simulationProfile>
 	
-	<simulationProfile>
+	<!--<simulationProfile>
 		<wirelessProtocol>DSDV</wirelessProtocol>
 		<numberOfNodesInCluster>16</numberOfNodesInCluster>
 		<numberOfClusters>9</numberOfClusters>
@@ -740,5 +667,3 @@
 		<maxRelDifMeanDelay>0.05</maxRelDifMeanDelay>
 		<simulationApproach>ONLY_THROUGHPUT</simulationApproach>
 	</simulationProfile>-->
-	
-</simulationSchema>

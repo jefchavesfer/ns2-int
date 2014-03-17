@@ -114,11 +114,11 @@ public class ScriptGeneratorDSR {
             String wiredDestination = flowData.getDestination();
 
             String wirelessSource = flowData.getWirelessSourceNode();
-            Integer wirelessSourceValue = (Integer.valueOf(wirelessSource) - this.data.getN0()) / this.data.getNc();
+            Integer wirelessSourceValue = (Integer.valueOf(wirelessSource) - this.data.getN0()) / this.data.getNn();
 
             String wirelessDestination = flowData.getWirelessDestinationNode();
             Integer wirelessDestinationValue =
-                    (Integer.valueOf(wirelessDestination) - this.data.getN0()) / this.data.getNc();
+                    (Integer.valueOf(wirelessDestination) - this.data.getN0()) / this.data.getNn();
 
             String uniqueFlow =
                     wiredSource + " " + wirelessSourceValue + " " + wirelessDestinationValue + " " + wiredDestination;
@@ -132,7 +132,8 @@ public class ScriptGeneratorDSR {
             if (!adjacentNodes.contains(uniqueFlow)) {
                 adjacentNodes.add(uniqueFlow);
             } else {
-                throw new RuntimeException("the adjacent flow is unique");
+                throw new RuntimeException("the adjacent flow is unique: " + uniqueFlow + " adjacentNodes "
+                        + adjacentNodes);
             }
 
             adjacentNodes = this.sourceSinkAdjacentNodesByWirelessNode.get(wirelessDestinationValue);
@@ -297,8 +298,8 @@ public class ScriptGeneratorDSR {
             Integer source = Integer.valueOf(flowData.getWirelessSourceNode());
             Integer destination = Integer.valueOf(flowData.getWirelessDestinationNode());
 
-            Integer sourceWireless = (source - this.data.getN0()) / this.data.getNc();
-            Integer destinationWireless = (destination - this.data.getN0()) / this.data.getNc();
+            Integer sourceWireless = (source - this.data.getN0()) / this.data.getNn();
+            Integer destinationWireless = (destination - this.data.getN0()) / this.data.getNn();
 
             Integer sourceAdjacentNodeCount =
                     this.adjacentNodeAbsoluteCountInitialValueByWirelessNode.get(sourceWireless);

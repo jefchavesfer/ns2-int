@@ -92,7 +92,7 @@ public class FileProcess {
         Float simulationInit = Float.valueOf(this.simulationParams.getInitialTime());
         for (int i = 0; i < this.numberOfSimulations; i++) {
             TclGeneratorSimulationData simulation = new TclGeneratorSimulationData();
-            // simulation.setNn(this.simulationParams.getNumberOfNodesInCluster());
+            simulation.setNn(this.simulationParams.getNumberOfNodesInCluster());
             simulation.setNc(this.simulationParams.getNumberOfClusters());
             simulation.setN0(this.n0);
             simulation.setNQueue(this.simulationParams.getWirelessQueueSize());
@@ -237,7 +237,7 @@ public class FileProcess {
                         previousWirelessTimeEntry = null; // in the new simulation there is no previous received package
                     }
                 }
-                
+
                 // deliveryRate
                 if (key.contains("-")) {
                     wirelessSimulationData.incrSentPackages();
@@ -436,207 +436,209 @@ public class FileProcess {
         return tclSimulationData;
     }
 
-    private void processExperimentData(TclGeneratorSimulationData tclSimulationData) {
-        // Map<String, QueueNode> throughputData = new HashMap<String, QueueNode>();
-        // for( Entry<Integer, FlowNode> packetFlow : tclSimulationData.getFlowData().entrySet() ){
-        // FlowNode packetData = packetFlow.getValue();
-        // Map<String, Float> timeData = packetData.getTimeData();
-        // Iterator<Entry<String, Float>> iterator = timeData.entrySet().iterator();
-        // boolean first = true;
-        //
-        //
-        // System.out.println(timeData.toString());
-        // List<Integer> nodeChain = packetFlow.getValue().getNodeChain();
-        // System.out.println(nodeChain.toString());
-        // Object[] flow = nodeChain.toArray();
-        // Integer src = (Integer) flow[0];
-        // Integer dest = (Integer) flow[nodeChain.size() - 1];
-        // String flowString = src + " " + dest;
-        // QueueNode flowData = throughputData.get(flowString);
-        // if( flowData == null ){
-        // flowData = new QueueNode();
-        // throughputData.put(flowString, flowData);
-        // }
-        // flowData.incrNodeData();
-        // }
-        // //calculating mean flow throughput
-        // for(Map.Entry<String, QueueNode> entryFlowData : throughputData.entrySet()){
-        // QueueNode flowData = entryFlowData.getValue();
-        // flowData.setFlowRate(1/(flowData.getNodeData()/this.timeInterval));
-        // }
-        //
-        // tclSimulationData.setThroughputData(throughputData);
-        // this.tclGenSimulationData.add(tclSimulationData);
-        // System.out.println(throughputData.toString());
-
-        Map<String, DataNode> throughputData = new HashMap<String, DataNode>();
-        // Map<String, DataNode> wirelessThroughputData = new HashMap<String, DataNode>();
-        Integer sentPackets = 0;
-        Integer receivedPackets = 0;
-        Integer sucessfullDeliveries = 0;
-        Float timeSum = 0f;
-        for (Entry<String, SimFlowData> packetMapFlow : tclSimulationData.getSimFlowMap().entrySet()) {
-
-            SimFlowData packetSimFlow = packetMapFlow.getValue();
-
-            if (!packetSimFlow.getWirelessFlowData().getTimeData().isEmpty()) {
-                // it is a wireless flow package
-
-                FlowData packetFlowData = packetSimFlow.getFlowData();
-
-                Map<String, Float> timeData = packetFlowData.getTimeData();
-                // System.out.println(timeData.toString());
-                Iterator<Entry<String, Float>> timeIterator = timeData.entrySet().iterator();
-                boolean first = true;
-                boolean dropped = false;
-                String beginFlow = null;
-                Entry<String, Float> timeEntry = null;
-                while (timeIterator.hasNext()) {
-                    // end time
-                    timeEntry = timeIterator.next();
-                    String key = timeEntry.getKey();
-
-                    if (dropped) {
-                        throw new RuntimeException("sanity: how?");
-                    }
-                    if (first) {
-                        beginFlow = key.substring(1);
-                        packetFlowData.setInitialTime(timeEntry.getValue());
-
-                        if (!packetFlowData.getSource().equals(beginFlow)) {
-                            throw new RuntimeException("first node is not the origin");
-                        }
-                    }
-
-                    // deliveryRate
-                    if (key.contains("-")) {
-                        sentPackets++;
-                    } else if (key.contains("r")) {
-                        receivedPackets++;
-                    } else if (key.contains("d")) {
-                        dropped = true;
-                    }
-                    first = false;
-                }
-                if ((timeEntry != null) && (beginFlow != null)) {
-                    String endFlowKey = timeEntry.getKey();
-                    String endFlow = endFlowKey.substring(1);
-                    packetFlowData.setEndTime(timeEntry.getValue());
-
-                    // sanity check
-                    if (endFlowKey.contains("r") && endFlow.equals(packetFlowData.getDestination())) {
-                        sucessfullDeliveries++;
-                        packetFlowData.calculateTimeInterval();
-                        timeSum += packetFlowData.getTimeInterval();
-
-                        String flowString = beginFlow + " " + endFlow;
-
-                        DataNode flowData = throughputData.get(flowString);
-                        if (flowData == null) {
-                            flowData = new DataNode();
-                            throughputData.put(flowString, flowData);
-                        }
-                        flowData.incrNodeData();
-                    }
-                }
-
-                // analysing wireless flow data
-                FlowData packetWirelessFlowData = packetSimFlow.getWirelessFlowData();
-                Map<String, Float> wirelessTimeData = packetWirelessFlowData.getTimeData();
-                // System.out.println(timeData.toString());
-                Iterator<Entry<String, Float>> wirelessTimeIterator = wirelessTimeData.entrySet().iterator();
-                first = true;
-                dropped = false;
-                beginFlow = null;
-                Entry<String, Float> wirelessTimeEntry = null;
-                while (wirelessTimeIterator.hasNext()) {
-                    // end time
-                    wirelessTimeEntry = timeIterator.next();
-                    String key = wirelessTimeEntry.getKey();
-
-                    if (dropped) {
-                        throw new RuntimeException("sanity: how?");
-                    }
-                    if (first) {
-                        beginFlow = key.substring(1);
-                        packetWirelessFlowData.setInitialTime(wirelessTimeEntry.getValue());
-                        packetWirelessFlowData.setSource(beginFlow);
-                    }
-
-                    // deliveryRate
-                    if (key.contains("-")) {
-                        sentPackets++;
-                    } else if (key.contains("r")) {
-                        receivedPackets++;
-                    } else if (key.contains("d")) {
-                        dropped = true;
-                    }
-                    first = false;
-                }
-                if ((timeEntry != null) && (beginFlow != null)) {
-                    String endFlowKey = timeEntry.getKey();
-                    String endFlow = endFlowKey.substring(1);
-                    packetWirelessFlowData.setEndTime(timeEntry.getValue());
-
-                    // sanity check
-                    if (endFlowKey.contains("r") && !endFlow.equals(beginFlow)) {
-                        sucessfullDeliveries++;
-                        packetFlowData.calculateTimeInterval();
-                        timeSum += packetFlowData.getTimeInterval();
-
-                        String flowString = beginFlow + " " + endFlow;
-
-                        DataNode flowData = throughputData.get(flowString);
-                        if (flowData == null) {
-                            flowData = new DataNode();
-                            throughputData.put(flowString, flowData);
-                        }
-                        flowData.incrNodeData();
-                    }
-                }
-            }
-        }
-
-        this.log.info("\n===========================================================================" + "\nSimulation "
-                + tclSimulationData.getT0() + " " + tclSimulationData.getTf()
-                + "\n===========================================================================");
-
-        // calculating delivery rate
-        Float sentPacketsFloat = sentPackets.floatValue();
-        if (sentPacketsFloat != 0f) {
-            tclSimulationData.setDeliveryRate(receivedPackets.floatValue() / sentPacketsFloat);
-        } else {
-            tclSimulationData.setDeliveryRate(0f);
-        }
-
-        this.log.info("deliveryRate: " + tclSimulationData.getDeliveryRate());
-
-        // calculating mean flow throughput
-        for (Map.Entry<String, DataNode> entryFlowData : throughputData.entrySet()) {
-            DataNode flowData = entryFlowData.getValue();
-            if (flowData.getNodeData() != 0) {
-                flowData.setFlowRate(1 / (flowData.getNodeData() / this.simulationParams.getTimeInterval() / tclSimulationData
-                        .getDeliveryRate()));
-            } else {
-                flowData.setFlowRate(0f);
-            }
-            this.log.info("flowRate " + entryFlowData.getKey() + ": " + flowData.getFlowRate());
-        }
-
-        // calculating mean delay
-        if (sucessfullDeliveries != 0f) {
-            tclSimulationData.setMeanDelay(timeSum / sucessfullDeliveries);
-        } else {
-            tclSimulationData.setMeanDelay(0f);
-        }
-        this.log.info("meanDelay: " + tclSimulationData.getMeanDelay());
-
-        tclSimulationData.setThroughputData(throughputData);
-        this.tclGenSimulationData.add(tclSimulationData);
-        this.log.info(throughputData.toString());
-
-        // TODO: falta filas e dropped
-    }
+    /*
+     * private void processExperimentData(TclGeneratorSimulationData tclSimulationData) {
+     * // Map<String, QueueNode> throughputData = new HashMap<String, QueueNode>();
+     * // for( Entry<Integer, FlowNode> packetFlow : tclSimulationData.getFlowData().entrySet() ){
+     * // FlowNode packetData = packetFlow.getValue();
+     * // Map<String, Float> timeData = packetData.getTimeData();
+     * // Iterator<Entry<String, Float>> iterator = timeData.entrySet().iterator();
+     * // boolean first = true;
+     * //
+     * //
+     * // System.out.println(timeData.toString());
+     * // List<Integer> nodeChain = packetFlow.getValue().getNodeChain();
+     * // System.out.println(nodeChain.toString());
+     * // Object[] flow = nodeChain.toArray();
+     * // Integer src = (Integer) flow[0];
+     * // Integer dest = (Integer) flow[nodeChain.size() - 1];
+     * // String flowString = src + " " + dest;
+     * // QueueNode flowData = throughputData.get(flowString);
+     * // if( flowData == null ){
+     * // flowData = new QueueNode();
+     * // throughputData.put(flowString, flowData);
+     * // }
+     * // flowData.incrNodeData();
+     * // }
+     * // //calculating mean flow throughput
+     * // for(Map.Entry<String, QueueNode> entryFlowData : throughputData.entrySet()){
+     * // QueueNode flowData = entryFlowData.getValue();
+     * // flowData.setFlowRate(1/(flowData.getNodeData()/this.timeInterval));
+     * // }
+     * //
+     * // tclSimulationData.setThroughputData(throughputData);
+     * // this.tclGenSimulationData.add(tclSimulationData);
+     * // System.out.println(throughputData.toString());
+     * 
+     * Map<String, DataNode> throughputData = new HashMap<String, DataNode>();
+     * // Map<String, DataNode> wirelessThroughputData = new HashMap<String, DataNode>();
+     * Integer sentPackets = 0;
+     * Integer receivedPackets = 0;
+     * Integer sucessfullDeliveries = 0;
+     * Float timeSum = 0f;
+     * for (Entry<String, SimFlowData> packetMapFlow : tclSimulationData.getSimFlowMap().entrySet()) {
+     * 
+     * SimFlowData packetSimFlow = packetMapFlow.getValue();
+     * 
+     * if (!packetSimFlow.getWirelessFlowData().getTimeData().isEmpty()) {
+     * // it is a wireless flow package
+     * 
+     * FlowData packetFlowData = packetSimFlow.getFlowData();
+     * 
+     * Map<String, Float> timeData = packetFlowData.getTimeData();
+     * // System.out.println(timeData.toString());
+     * Iterator<Entry<String, Float>> timeIterator = timeData.entrySet().iterator();
+     * boolean first = true;
+     * boolean dropped = false;
+     * String beginFlow = null;
+     * Entry<String, Float> timeEntry = null;
+     * while (timeIterator.hasNext()) {
+     * // end time
+     * timeEntry = timeIterator.next();
+     * String key = timeEntry.getKey();
+     * 
+     * if (dropped) {
+     * throw new RuntimeException("sanity: how?");
+     * }
+     * if (first) {
+     * beginFlow = key.substring(1);
+     * packetFlowData.setInitialTime(timeEntry.getValue());
+     * 
+     * if (!packetFlowData.getSource().equals(beginFlow)) {
+     * throw new RuntimeException("first node is not the origin");
+     * }
+     * }
+     * 
+     * // deliveryRate
+     * if (key.contains("-")) {
+     * sentPackets++;
+     * } else if (key.contains("r")) {
+     * receivedPackets++;
+     * } else if (key.contains("d")) {
+     * dropped = true;
+     * }
+     * first = false;
+     * }
+     * if ((timeEntry != null) && (beginFlow != null)) {
+     * String endFlowKey = timeEntry.getKey();
+     * String endFlow = endFlowKey.substring(1);
+     * packetFlowData.setEndTime(timeEntry.getValue());
+     * 
+     * // sanity check
+     * if (endFlowKey.contains("r") && endFlow.equals(packetFlowData.getDestination())) {
+     * sucessfullDeliveries++;
+     * packetFlowData.calculateTimeInterval();
+     * timeSum += packetFlowData.getTimeInterval();
+     * 
+     * String flowString = beginFlow + " " + endFlow;
+     * 
+     * DataNode flowData = throughputData.get(flowString);
+     * if (flowData == null) {
+     * flowData = new DataNode();
+     * throughputData.put(flowString, flowData);
+     * }
+     * flowData.incrNodeData();
+     * }
+     * }
+     * 
+     * // analysing wireless flow data
+     * FlowData packetWirelessFlowData = packetSimFlow.getWirelessFlowData();
+     * Map<String, Float> wirelessTimeData = packetWirelessFlowData.getTimeData();
+     * // System.out.println(timeData.toString());
+     * Iterator<Entry<String, Float>> wirelessTimeIterator = wirelessTimeData.entrySet().iterator();
+     * first = true;
+     * dropped = false;
+     * beginFlow = null;
+     * Entry<String, Float> wirelessTimeEntry = null;
+     * while (wirelessTimeIterator.hasNext()) {
+     * // end time
+     * wirelessTimeEntry = timeIterator.next();
+     * String key = wirelessTimeEntry.getKey();
+     * 
+     * if (dropped) {
+     * throw new RuntimeException("sanity: how?");
+     * }
+     * if (first) {
+     * beginFlow = key.substring(1);
+     * packetWirelessFlowData.setInitialTime(wirelessTimeEntry.getValue());
+     * packetWirelessFlowData.setSource(beginFlow);
+     * }
+     * 
+     * // deliveryRate
+     * if (key.contains("-")) {
+     * sentPackets++;
+     * } else if (key.contains("r")) {
+     * receivedPackets++;
+     * } else if (key.contains("d")) {
+     * dropped = true;
+     * }
+     * first = false;
+     * }
+     * if ((timeEntry != null) && (beginFlow != null)) {
+     * String endFlowKey = timeEntry.getKey();
+     * String endFlow = endFlowKey.substring(1);
+     * packetWirelessFlowData.setEndTime(timeEntry.getValue());
+     * 
+     * // sanity check
+     * if (endFlowKey.contains("r") && !endFlow.equals(beginFlow)) {
+     * sucessfullDeliveries++;
+     * packetFlowData.calculateTimeInterval();
+     * timeSum += packetFlowData.getTimeInterval();
+     * 
+     * String flowString = beginFlow + " " + endFlow;
+     * 
+     * DataNode flowData = throughputData.get(flowString);
+     * if (flowData == null) {
+     * flowData = new DataNode();
+     * throughputData.put(flowString, flowData);
+     * }
+     * flowData.incrNodeData();
+     * }
+     * }
+     * }
+     * }
+     * 
+     * this.log.info("\n===========================================================================" + "\nSimulation "
+     * + tclSimulationData.getT0() + " " + tclSimulationData.getTf()
+     * + "\n===========================================================================");
+     * 
+     * // calculating delivery rate
+     * Float sentPacketsFloat = sentPackets.floatValue();
+     * if (sentPacketsFloat != 0f) {
+     * tclSimulationData.setDeliveryRate(receivedPackets.floatValue() / sentPacketsFloat);
+     * } else {
+     * tclSimulationData.setDeliveryRate(0f);
+     * }
+     * 
+     * this.log.info("deliveryRate: " + tclSimulationData.getDeliveryRate());
+     * 
+     * // calculating mean flow throughput
+     * for (Map.Entry<String, DataNode> entryFlowData : throughputData.entrySet()) {
+     * DataNode flowData = entryFlowData.getValue();
+     * if (flowData.getNodeData() != 0) {
+     * flowData.setFlowRate(1 / (flowData.getNodeData() / this.simulationParams.getTimeInterval() / tclSimulationData
+     * .getDeliveryRate()));
+     * } else {
+     * flowData.setFlowRate(0f);
+     * }
+     * this.log.info("flowRate " + entryFlowData.getKey() + ": " + flowData.getFlowRate());
+     * }
+     * 
+     * // calculating mean delay
+     * if (sucessfullDeliveries != 0f) {
+     * tclSimulationData.setMeanDelay(timeSum / sucessfullDeliveries);
+     * } else {
+     * tclSimulationData.setMeanDelay(0f);
+     * }
+     * this.log.info("meanDelay: " + tclSimulationData.getMeanDelay());
+     * 
+     * tclSimulationData.setThroughputData(throughputData);
+     * this.tclGenSimulationData.add(tclSimulationData);
+     * this.log.info(throughputData.toString());
+     * 
+     * // TODO: falta filas e dropped
+     * }
+     */
 
     public List<TclGeneratorSimulationData> getTclGenSimulationData() {
         return this.tclGenSimulationData;

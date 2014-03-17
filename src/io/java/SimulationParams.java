@@ -29,6 +29,8 @@ public class SimulationParams {
     private Integer packetSize;
     private Integer wirelessQueueSize;
     private Integer wiredQueueSize;
+    private Integer desirableExternalHopNumber;
+    private Integer desirableInternalHopNumber;
 
     private Float timeInterval;
     private List<Float> appThroughput = new ArrayList<Float>();
@@ -202,6 +204,34 @@ public class SimulationParams {
      */
     public void setExternalTraffic(Float externalTraffic) {
         this.externalTraffic = externalTraffic;
+    }
+
+    /**
+     * @return desirableExternalHopNumber
+     */
+    public Integer getDesirableExternalHopNumber() {
+        return this.desirableExternalHopNumber;
+    }
+
+    /**
+     * @param desirableExternalHopNumber
+     */
+    public void setDesirableExternalHopNumber(Integer desirableExternalHopNumber) {
+        this.desirableExternalHopNumber = desirableExternalHopNumber;
+    }
+
+    /**
+     * @return desirableInternalHopNumber
+     */
+    public Integer getDesirableInternalHopNumber() {
+        return this.desirableInternalHopNumber;
+    }
+
+    /**
+     * @param desirableInternalHopNumber
+     */
+    public void setDesirableInternalHopNumber(Integer desirableInternalHopNumber) {
+        this.desirableInternalHopNumber = desirableInternalHopNumber;
     }
 
     /**
@@ -536,6 +566,8 @@ public class SimulationParams {
         cloned.setNumberOfClusters(this.numberOfClusters);
         cloned.setInternalTraffic(this.internalTraffic);
         cloned.setExternalTraffic(this.externalTraffic);
+        cloned.setDesirableInternalHopNumber(this.desirableInternalHopNumber);
+        cloned.setDesirableExternalHopNumber(this.desirableExternalHopNumber);
         cloned.setPacketSize(this.packetSize);
         cloned.setWirelessQueueSize(this.wirelessQueueSize);
         cloned.setWiredQueueSize(this.wiredQueueSize);

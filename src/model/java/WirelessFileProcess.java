@@ -58,6 +58,12 @@ public class WirelessFileProcess {
                 trLine = trFile.readLine();
                 if (trLine != null) {
                     String[] columns = trLine.split(" ");
+
+                    if (columns.length < 8) {
+                        // smaller lines that are outside agent package pattern are ignored
+                        continue;
+                    }
+
                     String packetStatus = columns[0];
                     time = columns[1];
                     if (Float.valueOf(time) < (this.simulationParams.getInitialTime() + SimulationParams

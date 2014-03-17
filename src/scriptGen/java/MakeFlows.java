@@ -38,36 +38,36 @@ public class MakeFlows {
     private static Map<NodeData, NodeData> internalFlowMap;
     private static Map<NodeData, NodeData> externalFlowMap;
     private static Set<NodeData> eligibleNodes;
-    private static Integer nn;
-    private static Integer nc;
-    private static Integer x;
+    private static Integer xn;
+    private static Integer xc;
     private static Integer centerClusterIndex;
-    private static Float internalPerc;
-    private static Float externalPerc;
+    private static Integer desirableWiredHopNumber;
+    private static Integer desirableWirelessHopNumber;
+    private static SimulationParams params;
 
     /**
      * @param simulationParams
      */
     public static void make(SimulationParams simulationParams) {
-        nn = simulationParams.getNumberOfNodesInCluster();
-        nc = simulationParams.getNumberOfClusters();
-        x = (int) Math.sqrt(simulationParams.getNumberOfNodesInCluster());
-        centerClusterIndex = ((x + 1) / 2) - 1;
+        xn = (int) Math.sqrt(simulationParams.getNumberOfNodesInCluster());
+        xc = (int) Math.sqrt(simulationParams.getNumberOfClusters());
+        centerClusterIndex = ((xn + 1) / 2) - 1;
         internalFlowMap = new HashMap<NodeData, NodeData>();
         externalFlowMap = new HashMap<NodeData, NodeData>();
         simulationParams.setInternalFlowMap(internalFlowMap);
         simulationParams.setExternalFlowMap(externalFlowMap);
         log = Logger.getLogger(SimulationParams.class.getName());
-        internalPerc = simulationParams.getInternalTraffic();
-        externalPerc = simulationParams.getExternalTraffic();
+        desirableWiredHopNumber = simulationParams.getDesirableInternalHopNumber();
+        desirableWirelessHopNumber = simulationParams.getDesirableExternalHopNumber();
+        params = simulationParams;
         generateFlows();
     }
 
     private static void generateEligibleNodeSet() {
         eligibleNodes = new HashSet<NodeData>();
-        for (int c = 0; c < nc; c++) {
-            for (int i = 0; i < x; i++) {
-                for (int j = 0; j < x; j++) {
+        for (int c = 0; c < params.getNumberOfClusters(); c++) {
+            for (int i = 0; i < xn; i++) {
+                for (int j = 0; j < xn; j++) {
                     if ((i == centerClusterIndex) && (j == centerClusterIndex)) {
                         continue;
                     }
@@ -75,6 +75,32 @@ public class MakeFlows {
                 }
             }
         }
+    }
+
+    private static int[] clusterToPosition(int clusterNum) {
+        int xPos = clusterNum / xc;
+        int yPos = clusterNum % xc;
+        return new int[] { xPos, yPos };
+    }
+
+    private static int abs(int x) {
+        return (x < 0) ? -x : x;
+    }
+
+    private static int calculateNumberOfWirelessHops(int sourceX, int sourceY, int destinationX, int destinationY) {
+        int absX = abs(sourceX - destinationX);
+        int absY = abs(sourceY - destinationY);
+        int smaller = (absX < absY) ? absX : absY;
+        int bigger = (absX > absY) ? absX : absY;
+        int diagonalHopNumber = smaller;
+        int horizontalOrVerticalHopNumber = bigger - diagonalHopNumber;
+        return horizontalOrVerticalHopNumber + diagonalHopNumber;
+    }
+
+    private static int calculateNumberOfWiredHops(int sourceX, int sourceY, int destinationX, int destinationY) {
+        int absX = abs(sourceX - destinationX);
+        int absY = abs(sourceY - destinationY);
+        return absX + absY;
     }
 
     private static boolean isEligibleNodesFromSameCluster() {
@@ -90,6 +116,72 @@ public class MakeFlows {
             }
         }
         return true;
+    }
+
+    private static int getAvaliableWiredHopNumberClosestToDesirable(int presentCluster) {
+        List<NodeData> remainingNodesList = new ArrayList<NodeData>(eligibleNodes);
+        // difference between desirable and possible hops. The difference must be minimal.
+        // The beggining value is equal to cluster number, because any difference is lessen than that
+        int minimalDiff = -1;
+        int closestDesirableValue = 0;
+        for (int i = 0; i < remainingNodesList.size(); i++) {
+            NodeData testNode = remainingNodesList.get(i);
+            if (testNode.getCluster() != presentCluster) {
+                continue;
+            }
+            for (int j = i + 1; j < remainingNodesList.size(); j++) {
+                NodeData remainingNode = remainingNodesList.get(j);
+                if (remainingNode.getCluster() != presentCluster) {
+                    continue;
+                }
+                int hops =
+                        calculateNumberOfWiredHops(remainingNode.getX(), remainingNode.getY(), testNode.getX(),
+                                testNode.getY());
+                int testDiff = abs(hops - desirableWirelessHopNumber);
+                if (testDiff == 0) {
+                    // there is at least one pair that is desirable
+                    return hops;
+                } else if ((testDiff < minimalDiff) || (minimalDiff < 0)) {
+                    // in case of no desirable pair the function will return the closest hop number to the desirable
+                    minimalDiff = testDiff;
+                    closestDesirableValue = hops;
+                }
+            }
+        }
+        return closestDesirableValue;
+    }
+
+    private static int getAvaliableWirelessHopNumberClosestToDesirable() {
+        List<NodeData> remainingNodesList = new ArrayList<NodeData>(eligibleNodes);
+        // difference between desirable and possible hops. The difference must be minimal.
+        // The beggining value is equal to cluster number, because any difference is lessen than that
+        int minimalDiff = -1;
+        int closestDesirableValue = 0;
+
+        for (int i = 0; i < remainingNodesList.size(); i++) {
+            NodeData testNode = remainingNodesList.get(i);
+            for (int j = i + 1; j < remainingNodesList.size(); j++) {
+                NodeData remainingNode = remainingNodesList.get(j);
+                if (remainingNode.getCluster() == testNode.getCluster()) {
+                    continue;
+                }
+                int[] destinationCoord = clusterToPosition(remainingNode.getCluster());
+                int[] sourceCoord = clusterToPosition(testNode.getCluster());
+                int hops =
+                        calculateNumberOfWirelessHops(sourceCoord[0], sourceCoord[1], destinationCoord[0],
+                                destinationCoord[1]);
+                int testDiff = abs(hops - desirableWirelessHopNumber);
+                if (testDiff == 0) {
+                    // there is at least one pair that is desirable
+                    return hops;
+                } else if ((testDiff < minimalDiff) || (minimalDiff < 0)) {
+                    // in case of no desirable pair the function will return the closest hop number to the desirable
+                    minimalDiff = testDiff;
+                    closestDesirableValue = hops;
+                }
+            }
+        }
+        return closestDesirableValue;
     }
 
     private static void breakRandomExternalFlow() {
@@ -113,80 +205,115 @@ public class MakeFlows {
     }
 
     private static void generateFlows() {
-        Integer nInternalFlow = ((int) (internalPerc * nn)) / 2;
-        Integer nExternalFlow = ((int) (externalPerc * nn)) / 2;
+        Integer nInternalFlow = ((int) (params.getInternalTraffic() * params.getNumberOfNodesInCluster())) / 2;
+        Integer nExternalFlow = ((int) (params.getExternalTraffic() * params.getNumberOfNodesInCluster())) / 2;
         Integer minimalNodes = (nInternalFlow + nExternalFlow) * 2;
 
-        if (minimalNodes > (nn - 1)) {
+        if (minimalNodes > (params.getNumberOfNodesInCluster() - 1)) {
             // it does not count the center node
-            throw new RuntimeException("It is impossible to build this network minimalNodes > " + nn);
+            throw new RuntimeException("It is impossible to build this network minimalNodes > "
+                    + params.getNumberOfNodesInCluster());
 
         }
 
         generateEligibleNodeSet();
 
-        for (int i = 0; i < nc; i++) {
+        for (int i = 0; i < params.getNumberOfClusters(); i++) {
+
+            desirableWiredHopNumber = params.getDesirableInternalHopNumber();
+
             for (int iInternalFlow = 0; iInternalFlow < nInternalFlow; iInternalFlow++) {
                 log.info("cluster " + i + " flow " + iInternalFlow);
                 boolean tryagain = true;
                 while (tryagain == true) {
-                    Integer nrand_sx = ((int) (Math.random() * bigN) % x);
-                    Integer nrand_sy = ((int) (Math.random() * bigN) % x);
+
+                    // verifying if is possible keep up with desirable wired hop number
+                    desirableWiredHopNumber = getAvaliableWiredHopNumberClosestToDesirable(i);
+                    if (desirableWiredHopNumber < 1) {
+                        throw new RuntimeException("Wired: There must be at least one hop");
+                    }
+
+                    Integer nrand_sx = ((int) (Math.random() * bigN) % xn);
+                    Integer nrand_sy = ((int) (Math.random() * bigN) % xn);
                     NodeData candidateSourceNode = new NodeData(i, nrand_sx, nrand_sy);
-                    if ((nrand_sx == x) && (nrand_sy == x)) {
+                    if ((nrand_sx == xn) && (nrand_sy == xn)) {
                         // it can't be the center node
                         continue;
                     }
                     if (!eligibleNodes.contains(candidateSourceNode)) {
                         continue;
                     }
-                    eligibleNodes.remove(candidateSourceNode);
-                    while (tryagain == true) {
-                        Integer nrand_dx = ((int) (Math.random() * bigN) % x);
-                        Integer nrand_dy = ((int) (Math.random() * bigN) % x);
-                        NodeData candidateDestinationNode = new NodeData(i, nrand_dx, nrand_dy);
-                        if (!eligibleNodes.contains(candidateDestinationNode)) {
-                            continue;
-                        }
-                        eligibleNodes.remove(candidateDestinationNode);
-                        internalFlowMap.put(candidateSourceNode, candidateDestinationNode);
-                        tryagain = false;
+
+                    // while (tryagain == true) {
+                    Integer nrand_dx = ((int) (Math.random() * bigN) % xn);
+                    Integer nrand_dy = ((int) (Math.random() * bigN) % xn);
+                    NodeData candidateDestinationNode = new NodeData(i, nrand_dx, nrand_dy);
+
+                    if (!eligibleNodes.contains(candidateDestinationNode)) {
+                        continue;
                     }
+                    if (calculateNumberOfWiredHops(candidateSourceNode.getX(), candidateSourceNode.getY(),
+                            candidateDestinationNode.getX(), candidateDestinationNode.getY()) != desirableWiredHopNumber) {
+                        continue;
+                    }
+
+                    eligibleNodes.remove(candidateSourceNode);
+                    eligibleNodes.remove(candidateDestinationNode);
+                    internalFlowMap.put(candidateSourceNode, candidateDestinationNode);
+                    tryagain = false;
+                    // }
                 }
             }
         }
 
-        for (int i = 0; i < nc; i++) {
+        for (int i = 0; i < params.getNumberOfClusters(); i++) {
+
             for (int iExternalFlow = 0; iExternalFlow < nExternalFlow; iExternalFlow++) {
                 log.info("cluster " + i + " external flow " + iExternalFlow);
                 boolean tryagain = true;
                 while (tryagain == true) {
-                    Integer nrand_sc = ((int) (Math.random() * bigN) % nc);
-                    Integer nrand_sx = ((int) (Math.random() * bigN) % x);
-                    Integer nrand_sy = ((int) (Math.random() * bigN) % x);
+
+                    // verifying if is possible keep up with desirable wireless hop number
+                    desirableWirelessHopNumber = getAvaliableWirelessHopNumberClosestToDesirable();
+                    if (desirableWirelessHopNumber < 1) {
+                        throw new RuntimeException("Wireless: There must be at least one hop");
+                    }
+
+                    Integer nrand_sc = ((int) (Math.random() * bigN) % params.getNumberOfClusters());
+                    Integer nrand_sx = ((int) (Math.random() * bigN) % xn);
+                    Integer nrand_sy = ((int) (Math.random() * bigN) % xn);
                     NodeData candidateSourceNode = new NodeData(nrand_sc, nrand_sx, nrand_sy);
                     if (!eligibleNodes.contains(candidateSourceNode)) {
                         continue;
                     }
-                    eligibleNodes.remove(candidateSourceNode);
-                    while (tryagain == true) {
-                        Integer nrand_dc = ((int) (Math.random() * bigN) % nc);
-                        if (nrand_dc == nrand_sc) {
-                            continue;
-                        }
-                        Integer nrand_dx = ((int) (Math.random() * bigN) % x);
-                        Integer nrand_dy = ((int) (Math.random() * bigN) % x);
-                        NodeData candidateDestinationNode = new NodeData(nrand_dc, nrand_dx, nrand_dy);
-                        if (!eligibleNodes.contains(candidateDestinationNode)) {
-                            continue;
-                        }
-                        eligibleNodes.remove(candidateDestinationNode);
-                        externalFlowMap.put(candidateSourceNode, candidateDestinationNode);
-                        tryagain = false;
+
+                    // while (tryagain == true) {
+                    Integer nrand_dc = ((int) (Math.random() * bigN) % params.getNumberOfClusters());
+                    if (nrand_dc == nrand_sc) {
+                        continue;
                     }
+                    Integer nrand_dx = ((int) (Math.random() * bigN) % xn);
+                    Integer nrand_dy = ((int) (Math.random() * bigN) % xn);
+                    NodeData candidateDestinationNode = new NodeData(nrand_dc, nrand_dx, nrand_dy);
+
+                    if (!eligibleNodes.contains(candidateDestinationNode)) {
+                        continue;
+                    }
+                    int[] candidateSourceNodePosition = clusterToPosition(candidateSourceNode.getCluster());
+                    int[] candidateDestinationNodePosition = clusterToPosition(candidateDestinationNode.getCluster());
+                    if (calculateNumberOfWirelessHops(candidateSourceNodePosition[0], candidateSourceNodePosition[1],
+                            candidateDestinationNodePosition[0], candidateDestinationNodePosition[1]) != desirableWirelessHopNumber) {
+                        continue;
+                    }
+                    eligibleNodes.remove(candidateSourceNode);
+                    eligibleNodes.remove(candidateDestinationNode);
+                    externalFlowMap.put(candidateSourceNode, candidateDestinationNode);
+                    tryagain = false;
+                    // }
                 }
                 // verifying if there is at least an external valid flow
-                if (isEligibleNodesFromSameCluster()) {
+                while (isEligibleNodesFromSameCluster()) {
+                    desirableWirelessHopNumber = 1; // minimal only for unbreaking
                     breakRandomExternalFlow();
                     iExternalFlow--;
                 }

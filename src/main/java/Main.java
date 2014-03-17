@@ -9,6 +9,7 @@ import io.java.TclGeneratorSimulationData;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 import model.java.FileProcess;
@@ -30,6 +31,7 @@ class Main {
      * @throws IOException
      */
     public static void main(String args[]) throws IOException {
+        Locale.setDefault(new Locale("en", "US"));
 
         final Logger log = Logger.getLogger(Main.class.getName());
 
