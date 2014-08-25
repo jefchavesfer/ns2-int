@@ -9,16 +9,19 @@ import io.java.TclGeneratorSimulationData;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
-
-import tree.java.DataNode;
 
 
 /**
- * Implements the decision process taken for stopping or continuing the simulation
+ * Implements the decision process taken for stopping or continuing the simulation iterative process
  * 
  * @author jchaves
  */
@@ -28,27 +31,31 @@ public class SimulationIterator {
     private static String decFormat = "#.#####";
     private static Float decPrecision = 0.00001f;
     private static Float decEqPrecision = decPrecision * 10;
+    private Map<String, Integer> masterPacketCountList;
     private List<TclGeneratorSimulationData> wiredSimulationData;
     private List<TclGeneratorSimulationData> wirelessSimulationData;
     private SimulationParams simulationParams;
     private Logger log;
     private FileWriter convergenceReport;
+    private boolean debug;
 
     /**
+     * @param debug
      * @param wiredSimulationData
      * @param wirelessSimulationData
      * @param previousParams
      * @param convergenceReport
      */
-    public SimulationIterator(List<TclGeneratorSimulationData> wiredSimulationData,
+    public SimulationIterator(boolean debug, List<TclGeneratorSimulationData> wiredSimulationData,
             List<TclGeneratorSimulationData> wirelessSimulationData, SimulationParams previousParams,
             FileWriter convergenceReport) {
-        super();
         this.wiredSimulationData = wiredSimulationData;
         this.wirelessSimulationData = wirelessSimulationData;
         this.simulationParams = previousParams;
         this.log = Logger.getLogger(Main.class.getName());
         this.convergenceReport = convergenceReport;
+        this.debug = debug;
+        this.masterPacketCountList = new HashMap<String, Integer>();
     }
 
     private Float fabs(Float val) {
@@ -64,6 +71,21 @@ public class SimulationIterator {
             return true;
         }
         return false;
+    }
+
+    private <K, V extends Comparable<? super V>> List<Entry<K, V>> entriesSortedByValues(Map<K, V> map) {
+
+        List<Entry<K, V>> sortedEntries = new ArrayList<Entry<K, V>>(map.entrySet());
+
+        Collections.sort(sortedEntries, new Comparator<Entry<K, V>>() {
+
+            @Override
+            public int compare(Entry<K, V> e1, Entry<K, V> e2) {
+                return e2.getValue().compareTo(e1.getValue());
+            }
+        });
+
+        return sortedEntries;
     }
 
     /**
@@ -89,19 +111,27 @@ public class SimulationIterator {
             TclGeneratorSimulationData wirelessSimulation = iteratorWireless.next();
             TclGeneratorSimulationData wiredSimulation = iteratorWired.next();
 
-            // deciding how throughput data is equal
-            Map<String, DataNode> wiredThroughputData = wiredSimulation.getThroughputData();
             Float wiredDeliveryRate = wiredSimulation.getDeliveryRate();
             Float wiredMeanDelay = wiredSimulation.getMeanDelay();
 
-            Map<String, DataNode> wirelessThroughputData = wirelessSimulation.getThroughputData();
             Float wirelessDeliveryRate = wirelessSimulation.getDeliveryRate();
             Float wirelessMeanDelay = wirelessSimulation.getMeanDelay();
+
             // for now it will be like this
             // wirelessMeanDelay = wirelessMeanDelay/2;
 
             if (wirelessSimulation.getThroughputData().size() != wirelessSimulation.getThroughputData().size()) {
                 throw new RuntimeException("Discrepancies between wired and wireless throughput data");
+            }
+
+            // packet through node master count
+            for (Map.Entry<String, Integer> nodeCount : wirelessSimulation.getNodePacketCountData().entrySet()) {
+                Integer packetCount = this.masterPacketCountList.get(nodeCount.getKey());
+                if (packetCount == null) {
+                    this.masterPacketCountList.put(nodeCount.getKey(), nodeCount.getValue());
+                } else {
+                    this.masterPacketCountList.put(nodeCount.getKey(), packetCount + nodeCount.getValue());
+                }
             }
 
             // gaps among samples are not needed in calculations
@@ -112,7 +142,9 @@ public class SimulationIterator {
                 wiredSimulationDeliveryRate += wiredDeliveryRate;
                 numberOfNotEmptySimulations++;
             } else {
-                System.out.println("gap");
+                if (this.debug) {
+                    System.out.println("gap");
+                }
             }
         }
 
@@ -192,9 +224,13 @@ public class SimulationIterator {
                             + errRelDelay + " correction Factor " + correctionFactorDelay + "\n"
                             + "New wired bandwidth " + newSimulationParams.getWiredBandwidth() + "\n"
                             + "New link delay " + newSimulationParams.getLinkDelay() + "\n" + "tamWired "
-                            + this.wiredSimulationData.size() + " tamWireless " + this.wirelessSimulationData.size();
+                            + this.wiredSimulationData.size() + " tamWireless " + this.wirelessSimulationData.size()
+                            + "\n";
+
+            strLog = strLog + "\npacket count " + this.masterPacketCountList.toString() + "\n";
+
         } else {
-            strLog = "There is no simulation data";
+            strLog = "There is no simulation data\n";
             // it is impossible iterate nothing
             newSimulationParams.setConverged(true);
         }
@@ -270,7 +306,7 @@ public class SimulationIterator {
                     if ((this.simulationParams.getAppThroughputHistory().get(listSize - 1) == decPrecision)
                             && (this.simulationParams.getAppThroughputHistory().get(listSize - 1) == this.simulationParams
                                     .getAppThroughputHistory().get(listSize - 2))) {
-                        String strLog = "There is NO smaller value for throughput";
+                        String strLog = "There is NO smaller value for throughput\n";
                         this.log.info(strLog);
                         this.convergenceReport.write(strLog);
                         newSimulationParams.setConverged(true);
@@ -318,7 +354,6 @@ public class SimulationIterator {
                 newSimulationParams.getLinkDelayHistory().clear();
                 newSimulationParams.getMeanDelayError().clear();
             } else {
-                // Float relErrorTest = (errRelDelivery - lastError) / lastError;
                 if (this.fabs(correctionFactorLinkDelay) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
                     if (correctionFactorLinkDelay > 0) {
                         correctionFactorLinkDelay = 2 * this.simulationParams.getMaxRelDifMeanDelay();
@@ -396,7 +431,6 @@ public class SimulationIterator {
                 newSimulationParams.getWiredBandwidthHistory().clear();
                 newSimulationParams.getMeanDelayError().clear();
             } else {
-                // Float relErrorTest = (errRelDelay - lastError) / lastError;
                 // the error difference is too small
                 if (this.fabs(correctionFactorDelay) < (2 * this.simulationParams.getMaxRelDifMeanDelay())) {
                     if (errRelDelay > 0) {
@@ -421,7 +455,7 @@ public class SimulationIterator {
                     if ((this.simulationParams.getWiredBandwidthHistory().get(listSize - 1) == (decPrecision + "Mb"))
                             && (this.simulationParams.getWiredBandwidthHistory().get(listSize - 1) == this.simulationParams
                                     .getWiredBandwidthHistory().get(listSize - 2))) {
-                        String strLog = "There is NO smaller value for wiredBandwidth";
+                        String strLog = "There is NO smaller value for wiredBandwidth\n";
                         this.log.info(strLog);
                         this.convergenceReport.write(strLog);
                         newSimulationParams.setConverged(true);

@@ -121,6 +121,8 @@ public class WirelessFileProcess {
                 throw new RuntimeException("Fluxo de Pacotes Incoerente");
             }
             wirelessTimeData.put(key, Float.valueOf(packetTime));
+            // increment packet sum that passed through a given node
+            tclSimulationData.incrNodePacketCountData(sPacketNode);
         }
         if ("D".equals(packetStatus)) {
             DataNode dropData = droppedData.get(packetNumber);

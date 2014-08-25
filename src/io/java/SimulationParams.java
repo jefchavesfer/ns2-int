@@ -8,6 +8,8 @@ import java.util.Map;
 
 
 /**
+ * Store all simulation Params
+ * 
  * @author jchaves
  */
 public class SimulationParams {
@@ -38,6 +40,7 @@ public class SimulationParams {
     private List<String> wiredBandwidth = new ArrayList<String>();
     private List<String> linkDelay = new ArrayList<String>();
     private List<Float> meanDelayError = new ArrayList<Float>();
+    private List<Integer> turnOffNodes = new ArrayList<Integer>();
     private Float dissimilarityCoefficient;
     private Float maxRelDifDeliveryRate;
     private Float maxRelDifMeanDelay;
@@ -542,6 +545,28 @@ public class SimulationParams {
     }
 
     /**
+     * @param turnOffNode
+     *            adds one node id to be turn off
+     */
+    public void ddTurnOffNode(Integer turnOffNode) {
+        this.turnOffNodes.add(turnOffNode);
+    }
+
+    /**
+     * @return o valor da propriedade turnOffNodes
+     */
+    public List<Integer> getTurnOffNodes() {
+        return this.turnOffNodes;
+    }
+
+    /**
+     * @param turnOffNodes
+     */
+    public void setTurnOffNodes(List<Integer> turnOffNodes) {
+        this.turnOffNodes = turnOffNodes;
+    }
+
+    /**
      * Clear all historyData
      */
     public void clearHistory() {
@@ -583,6 +608,8 @@ public class SimulationParams {
 
         cloned.setInternalFlowMap(this.internalFlowMap);
         cloned.setExternalFlowMap(this.externalFlowMap);
+
+        cloned.setTurnOffNodes(this.turnOffNodes);
 
         cloned.setMeanDelayError(this.meanDelayError);
         cloned.setDeliveryRateError(this.deliveryRateError);

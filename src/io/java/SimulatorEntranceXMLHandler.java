@@ -11,7 +11,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * Simulator Param XML Handler
+ * Simulator param XML Handler
  * 
  * @author jchaves
  */

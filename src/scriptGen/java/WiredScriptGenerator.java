@@ -8,7 +8,11 @@ import io.java.SimulationParams;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+
+import tree.java.LinkInfo;
 
 
 /**
@@ -21,6 +25,9 @@ public class WiredScriptGenerator {
     static private String br = " \r\n";
     private FileWriter scriptFile;
 
+    // for deactivating wired links when necessary
+    private Integer n0;
+
     private SimulationParams simulationParams;
     private Float deltaFlow;
 
@@ -31,11 +38,71 @@ public class WiredScriptGenerator {
     public WiredScriptGenerator(SimulationParams simulationParams) throws IOException {
         super();
         this.simulationParams = simulationParams;
+        Integer x = (int) Math.sqrt(this.simulationParams.getNumberOfNodesInCluster());
+        this.n0 = (((((x + 1) / 2) - 1) * x) + ((x + 1) / 2)) - 1; // works for odd and even x
+
+        // time for avoiding all nodes trying to MAC at same time
         this.deltaFlow =
                 (SimulationParams.getTimeOffset() * 0.8f)
                         / (this.simulationParams.getInternalFlowMap().size() + this.simulationParams
                                 .getExternalFlowMap().size());
         this.scriptFile = new FileWriter(this.simulationParams.getWiredFileDiscriminator() + ".tcl");
+    }
+
+    private List<LinkInfo> generateDeactivateLinkList(int node) {
+        List<LinkInfo> wiredLinks = new ArrayList<LinkInfo>();
+        int nodeCluster = (node - this.n0) % this.simulationParams.getNumberOfNodesInCluster();
+
+        int clusterSide = (int) Math.sqrt(this.simulationParams.getNumberOfNodesInCluster());
+        // inner cluster coordinates
+        int nodeX = ((clusterSide + 1) / 2) - 1;
+        int nodeY = nodeX;
+
+        // outer cluster data
+        int clusterX = (int) (Math.sqrt(this.simulationParams.getNumberOfClusters()));
+
+        int supCluster = nodeCluster - clusterX;
+        int infCluster = nodeCluster + clusterX;
+        int leftCluster = nodeCluster - 1;
+        int rightCluster = nodeCluster + 1;
+        int diagonalSupLeftCluster = supCluster - 1;
+        int diagonalSupRightCluster = supCluster + 1;
+        int diagonalInfLeftCluster = infCluster - 1;
+        int diagonalInfRightCluster = infCluster + 1;
+
+        if (supCluster >= 0) {
+            wiredLinks.add(new LinkInfo(clusterX, supCluster, nodeX, nodeY, nodeX, nodeY));
+
+            if ((supCluster % clusterX) != 0) {
+                wiredLinks.add(new LinkInfo(clusterX, diagonalSupLeftCluster, nodeX, nodeY, nodeX, nodeY));
+            }
+
+            if (((supCluster + 1) % clusterX) != 0) {
+                wiredLinks.add(new LinkInfo(clusterX, diagonalSupRightCluster, nodeX, nodeY, nodeX, nodeY));
+            }
+        }
+
+        if (infCluster < this.simulationParams.getNumberOfNodesInCluster()) {
+            wiredLinks.add(new LinkInfo(clusterX, infCluster, nodeX, nodeY, nodeX, nodeY));
+
+            if ((infCluster % clusterX) != 0) {
+                wiredLinks.add(new LinkInfo(clusterX, diagonalInfLeftCluster, nodeX, nodeY, nodeX, nodeY));
+            }
+
+            if (((infCluster + 1) % clusterX) != 0) {
+                wiredLinks.add(new LinkInfo(clusterX, diagonalInfRightCluster, nodeX, nodeY, nodeX, nodeY));
+            }
+        }
+
+        if ((node % clusterX) != 0) {
+            wiredLinks.add(new LinkInfo(clusterX, leftCluster, nodeX, nodeY, nodeX, nodeY));
+        }
+
+        if (((node + 1) % clusterX) != 0) {
+            wiredLinks.add(new LinkInfo(clusterX, rightCluster, nodeX, nodeY, nodeX, nodeY));
+        }
+
+        return wiredLinks;
     }
 
     private void writeSimulation() throws IOException {
@@ -350,12 +417,23 @@ public class WiredScriptGenerator {
 				"   # Print some info."																																+ br +
 				"   puts \"Run nam...\""																															+ br +
 				"   # exec nam " + this.simulationParams.getWiredFileDiscriminator() + ".nam "																		+ br +
-				"}"																																					+ br +	
-
+				"}"																																					+ br
+				);
+		                
+				for ( Integer turnOffNode : this.simulationParams.getTurnOffNodes()){
+				    List<LinkInfo> turnOffNodeData = this.generateDeactivateLinkList(turnOffNode);
+				    this.scriptFile.write(br + "#wired nodes to be turned off" + br);
+				    for ( LinkInfo turnOffInfo : turnOffNodeData ){
+				        this.scriptFile.write("$ns rtmodel-at 1.0 down $r([" + turnOffInfo.getSourceCluster() +      "]["+ turnOffInfo.getSourceNodeX()        +"][" + turnOffInfo.getSourceNodeY() +      "])" +
+				        		                             " $r([" + turnOffInfo.getDestinationCluster() + "][" + turnOffInfo.getDestinationNodeX() + "][" + turnOffInfo.getDestinationNodeY() + "])" + br);
+				    }
+				}
+				
+				this.scriptFile.write(                                                                                                                                                                                                                                                            br +
 				"#run the simulation"																																+ br +
 				"puts \"eu vou rodar\""																																+ br +
-				"$Nocns run"																																		+ br +
-				"puts \"rodei\""																																	+ br
+				"$Nocns run"																																        + br +
+				"puts \"rodei\""																																+ br
 				);
     //@formatter:on
     }

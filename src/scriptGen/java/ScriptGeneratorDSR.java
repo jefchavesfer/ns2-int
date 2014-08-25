@@ -166,6 +166,7 @@ public class ScriptGeneratorDSR {
                 }
             }
             this.scriptFile.write(br + " set totalAdjacentNodes_(" + i + ") " + adjacentNodesListSize + br);
+            this.scriptFile.write(" set turnOffFlag_(" + i + ") " + this.data.getTurnOffFlag(i) + br);
         }
         this.scriptFile.write(br);
     }
@@ -198,6 +199,9 @@ public class ScriptGeneratorDSR {
                                  + "            $node_($adjcentNodeAsoluteCount) set X_ $pos_a_x" + br 
                                  + "            $node_($adjcentNodeAsoluteCount) set Y_ $pos_a_y" + br
                                  + "            $node_($adjcentNodeAsoluteCount) set Z_ 0" + br 
+                                 + "            if {turnOffNodeFlag($i) != 0} {" + br
+                                 + "                $ns_ at " + this.data.getT0() + this.timeOffset + "  $node_($adjcentNodeAsoluteCount) setdest [ expr $pos_a_x + $farXoffset ] [ expr $pos_a_y + $farYOffset ] $farSpeed" + br
+                                 + "            } " + br
                                  + "            puts \"node $adjcentNodeAsoluteCount: ($pos_a_x, $pos_a_y)\"" + br
                                  + "            incr adjcentNodeAsoluteCount" + br
                                  + "         }" + br
@@ -236,6 +240,12 @@ public class ScriptGeneratorDSR {
                                  + "$ns_ at " + (t0 + (flow * this.deltaFlow)) + " \"$cbr(" + flow + ") start\"" + br
                                  + "$ns_ at " + (tf + this.timeOffset) + " \"$cbr(" + flow + ") stop\"" + br);
        // @formatter:on 
+    }
+
+    private void writeNodeDeactivation(Float timeOff, Float farXOffset, Float farYOffset, Float farSpeed)
+            throws IOException {
+        this.scriptFile.write("$ns_ at " + timeOff + " $node_ setdest " + farXOffset + " " + farYOffset + " "
+                + farSpeed + br);
     }
 
     private void writeSimulation() throws IOException {

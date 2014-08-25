@@ -7,7 +7,6 @@ import io.java.SimulationParams;
 import io.java.TclGeneratorSimulationData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +19,11 @@ import tree.java.FlowData;
 import tree.java.SimFlowData;
 
 
+/**
+ * Process ns-2 wired simulation trace file in order to generate wireless simulation scripts
+ * 
+ * @author jchaves
+ */
 public class FileProcess {
 
     private List<TclGeneratorSimulationData> tclGenSimulationData;
@@ -43,6 +47,9 @@ public class FileProcess {
         this.n0 = (((((x + 1) / 2) - 1) * x) + ((x + 1) / 2)) - 1; // works for odd and even x
     }
 
+    /**
+     * read wired .tr file and extract line data
+     */
     public void processFile() {
 
         FileReader trFile = new FileReader(this.simulationParams.getWiredFileDiscriminator() + ".tr");
@@ -58,23 +65,12 @@ public class FileProcess {
                     // reject time offset values used for stabilization
                     continue;
                 }
-                // Float timeInstant = Float.valueOf(columns[1]);
-                // if (timeInstant >= maxTime) {
-                // do { // generate files even for packet intervals bigger than sampling
+
                 if (columns.length == 12) {
                     tclSimulationData = this.organizeExperimentData(columns, tclSimulationData);
                 } else {
                     throw new RuntimeException("Strange simulation line");
                 }
-
-                // tclSimulationData = new TclGeneratorSimulationData();
-                // maxTime += this.timeInterval;
-                // if (maxTime < timeInstant) {
-                // System.out.println("lacou");
-                // }
-                // } while (maxTime < timeInstant);
-                // }
-                // tclSimulationData = this.organizeExperimentData(columns, tclSimulationData);
             }
         } while (trLine != null);
         trFile.close();
@@ -240,9 +236,9 @@ public class FileProcess {
 
                 // deliveryRate
                 if (key.contains("-")) {
-                    wirelessSimulationData.incrSentPackages();
+                    wirelessSimulationData.incrSentPackets();
                 } else if (key.contains("r")) {
-                    wirelessSimulationData.incrReceivedPackages();
+                    wirelessSimulationData.incrReceivedPackets();
                 } else if (key.contains("d")) {
                     dropped = true;
                 }
@@ -314,7 +310,6 @@ public class FileProcess {
 
         Map<String, SimFlowData> simFlowMap = tclSimulationData.getSimFlowMap();
         Map<String, DataNode> queueData = tclSimulationData.getQueueData();
-        Map<String, DataNode> droppedData = tclSimulationData.getDroppedData();
 
         SimFlowData simFlow = simFlowMap.get(packetNumber);
         if (simFlow == null) {

@@ -25,12 +25,14 @@ import scriptGen.java.WiredScriptGenerator;
 class Main {
 
     private static String paramFileRadical = "parameters";
+    private static boolean debug = false;
 
     /**
      * @param args
      * @throws IOException
      */
     public static void main(String args[]) throws IOException {
+        // avoid putting commas in trace analysis process
         Locale.setDefault(new Locale("en", "US"));
 
         final Logger log = Logger.getLogger(Main.class.getName());
@@ -105,7 +107,7 @@ class Main {
 
                 }
                 SimulationIterator simuIterator =
-                        new SimulationIterator(wiredSimulationData, wirelessSimulationData, simulationProfile,
+                        new SimulationIterator(debug, wiredSimulationData, wirelessSimulationData, simulationProfile,
                                 convergenceReport);
                 simulationProfile = simuIterator.generateNewSimulationParams();
                 convergenceReport.flush();
