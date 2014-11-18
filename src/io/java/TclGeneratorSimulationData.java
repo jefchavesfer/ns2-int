@@ -40,7 +40,8 @@ public class TclGeneratorSimulationData {
     private Integer receivedPackets;
     private Integer successfulDeliveries;
     private Float sucessfulDeliveryTimeSum;
-    private Vector<Integer> turnOffFlag;
+    private Vector<TurnOffNode> turnOffNodes;
+    private int timeOffSet;
 
     /**	 */
     public TclGeneratorSimulationData() {
@@ -53,7 +54,7 @@ public class TclGeneratorSimulationData {
         this.receivedPackets = 0;
         this.successfulDeliveries = 0;
         this.sucessfulDeliveryTimeSum = 0f;
-        this.turnOffFlag = new Vector<Integer>();
+        this.turnOffNodes = new Vector<TurnOffNode>();
     }
 
     /**
@@ -377,17 +378,31 @@ public class TclGeneratorSimulationData {
     }
 
     /**
-     * @return turnOffFlag
+     * @return turnOffNodes
      */
-    public Vector<Integer> getTurnOffFlag() {
-        return this.turnOffFlag;
+    public Vector<TurnOffNode> getTurnOffNodes() {
+        return this.turnOffNodes;
     }
 
     /**
-     * @param turnOffFlag
+     * @param turnOffNodes
      */
-    public void setTurnOffFlag(Vector<Integer> turnOffFlag) {
-        this.turnOffFlag = turnOffFlag;
+    public void setTurnOffNodes(Vector<TurnOffNode> turnOffNodes) {
+        this.turnOffNodes = turnOffNodes;
+    }
+
+    /**
+     * @return timeOffSet
+     */
+    public int getTimeOffSet() {
+        return this.timeOffSet;
+    }
+
+    /**
+     * @param timeOffSet
+     */
+    public void setTimeOffSet(int timeOffSet) {
+        this.timeOffSet = timeOffSet;
     }
 
     /**

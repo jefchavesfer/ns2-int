@@ -33,6 +33,10 @@ public class SimulatorEntranceXMLHandler extends DefaultHandler {
         if (qName.equalsIgnoreCase("simulationProfile")) {
             this.simulationProfiles.add(new SimulationParams());
         }
+
+        if (qName.equalsIgnoreCase("turnOffNode")) {
+            this.simulationProfiles.lastElement().addTurnOffNode(new TurnOffNode());
+        }
     }
 
     @Override
@@ -145,6 +149,21 @@ public class SimulatorEntranceXMLHandler extends DefaultHandler {
                 this.simulationProfiles.lastElement().setSimulationApproach(SimulationApproach.ONLY_THROUGHPUT);
             }
             this.log.info("simulationApproach: " + this.simulationProfiles.lastElement().getSimulationApproach());
+        }
+
+        if (qName.equalsIgnoreCase("nodeIndex")) {
+            this.simulationProfiles.lastElement().getTurnOffNodes().lastElement()
+                    .setNodeIndex(Integer.valueOf(this.buffer));
+        }
+
+        if (qName.equalsIgnoreCase("initialOffTime")) {
+            this.simulationProfiles.lastElement().getTurnOffNodes().lastElement()
+                    .setInitialTime(Float.valueOf(this.buffer));
+        }
+
+        if (qName.equalsIgnoreCase("endOffTime")) {
+            this.simulationProfiles.lastElement().getTurnOffNodes().lastElement()
+                    .setEndTime(Float.valueOf(this.buffer));
         }
     }
 

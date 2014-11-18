@@ -3,6 +3,7 @@ package scriptGen.java;
 
 
 import io.java.TclGeneratorSimulationData;
+import io.java.TurnOffNode;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -44,6 +45,11 @@ public class ScriptGeneratorDSR {
         this.deltaFlow = (this.timeOffset * 0.8f) / this.data.getThroughputData().size();
     }
 
+    private String writeNodePositionChange(String time, String strNodeIndex, String strXOffset, String strYOffset) {
+        return "              $ns_ at " + time + " \"$node_(" + strNodeIndex + ") setdest " + strXOffset + " "
+                + strYOffset + " $farSpeed\"" + br;
+    }
+
     private void writeHeader() throws IOException {
         // @formatter:off
         this.scriptFile.write(br + "# Initializing" + br 
@@ -59,26 +65,33 @@ public class ScriptGeneratorDSR {
                                  + "set opt(ifqlen)         " + this.data.getNQueue() + "    ;# max packet in ifq" + br
                                  + "set opt(nc)             " + this.data.getNc() + "     ;# number of mobilenodes" + br
                                  + "set opt(nn)             " + this.totalOfNodes + "     ;# totalOfNodes" + br
-                                 + "set rad [expr int( sqrt( $opt(nc) ) ) ]" + br 
+                                 + "set rad [expr int( sqrt( $opt(nc) ) ) ]" + br                                  
+                                 + "set farAwayDistConstant 10" + br
+                                 + "set farAwaySpeedConstant  1000" + br
+                                 + "set initial_x     1" + br 
+                                 + "set initial_y     1" + br
+                                 + "set pos_x         $initial_x" + br 
+                                 + "set pos_y         $initial_y" + br + br
                                  + "set PI  [expr atan(1) * 4] "+ br    
                                  + "#Area" + br 
                                  + "set distNodes               " + this.distNodes + br
                                  + "set closeAdjacentNodes      " + this.distCloseNodes + br
-                                 + "set opt(x)		[expr $distNodes * $rad]" + br 
-                                 + "set opt(y)		[expr $distNodes * $rad]" + br
+                                 + "set opt(x)		[expr $distNodes * $rad + $initial_x]" + br 
+                                 + "set opt(y)		[expr $distNodes * $rad + $initial_y]" + br
                                  + "set opt(stop) " + ( this.data.getTf() + this.timeOffset ) + "	         ;# simulation time" + br 
                                  + "set opt(tr)   " + this.data.getFileRadical() + "     ;# trace file" + br + br
                                  + "#protocol" + br 
                                  + "set opt(rp) " + this.data.getWirelessProtocol() + br + br 
-                                 + "set pos_x         0" + br 
-                                 + "set pos_y         0" + br + br 
                                  + "set tracefd     [open $opt(tr).tr w]" + br 
                                  + "$ns_ trace-all $tracefd" + br + br
                                  + "set namtrace [open $opt(tr).nam w]" + br 
-                                 + "$ns_ namtrace-all-wireless $namtrace $opt(x) $opt(y)" + br + br 
+                                 + "$ns_ namtrace-all-wireless $namtrace $opt(x) $opt(y)" + br + br
+                                 + "set farXOffset [ expr $opt(nc) * $farAwayDistConstant  * $distNodes + $initial_x]" + br 
+                                 + "set farYOffset [ expr $opt(nc) * $farAwayDistConstant  * $distNodes + $initial_y]" + br
+                                 + "set farSpeed   [ expr $opt(nc) * $farAwaySpeedConstant ]" + br
                                  + "# set up topography object" + br 
                                  + "set topo       [new Topography]" + br + br
-                                 + "$topo load_flatgrid $opt(x) $opt(y)" + br + br 
+                                 + "$topo load_flatgrid [ expr $opt(x) + $farXOffset + 2 * $closeAdjacentNodes ] [ expr $opt(y) + $farYOffset + 2 * $closeAdjacentNodes ]" + br + br 
                                  + "# Create God" + br
                                  + "set god_ [create-god $opt(nn)]" + br + br 
                                  + "# configure node, please note the change below." + br
@@ -96,6 +109,7 @@ public class ScriptGeneratorDSR {
                                  + "		-macTrace ON \\" + br 
                                  + "		-movementTrace ON \\" + br 
                                  + "		-channel [new $opt(chan)]" + br + br
+                                 + "# configure offset for distant inactive nodes" + br
                                  + "for {set i 0} {$i < $opt(nn)} {incr i} {" + br 
                                  + "  	set node_($i) [$ns_ node]" + br
                                  + "}" + br );
@@ -166,9 +180,93 @@ public class ScriptGeneratorDSR {
                 }
             }
             this.scriptFile.write(br + " set totalAdjacentNodes_(" + i + ") " + adjacentNodesListSize + br);
-            this.scriptFile.write(" set turnOffFlag_(" + i + ") " + this.data.getTurnOffFlag(i) + br);
+
+            this.prepareTurnOnOffFlags(i);
         }
         this.scriptFile.write(br);
+    }
+
+    private TurnOffNode searchNodeTurnOffData(int i) {
+        for (TurnOffNode turnOffNodeData : this.data.getTurnOffNodes()) {
+            if (turnOffNodeData.getNodeIndex() == i) {
+                return turnOffNodeData;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param i
+     * @throws IOException
+     */
+    private void prepareTurnOnOffFlags(int i) throws IOException {
+        TurnOffNode turnOffNodeData = this.searchNodeTurnOffData(i);
+
+        if ((turnOffNodeData == null)
+                || ((this.data.getTf() < turnOffNodeData.getInitialTime()) && (this.data.getTf() < turnOffNodeData
+                        .getEndTime()))
+                || ((this.data.getT0() > turnOffNodeData.getInitialTime()) && (this.data.getT0() > turnOffNodeData
+                        .getEndTime()))) {
+
+            this.scriptFile.write(" # this node follows normally in this slot" + br);
+            this.scriptFile.write(" set turnOffFlag_(" + i + ")  0 " + br);
+            this.scriptFile.write(" set turnOnFlag_(" + i + ")   0 " + br);
+            this.scriptFile.write(" set initialOffTime_(" + i + ") 0 " + br);
+            this.scriptFile.write(" set endOffTime_(" + i + ") 0 " + br);
+
+        } else if ((turnOffNodeData.getInitialTime() < this.data.getT0())
+                && (turnOffNodeData.getEndTime() >= this.data.getTf())) {
+
+            this.scriptFile.write(" # this node is not being considered in this slot" + br);
+            this.scriptFile.write(" set turnOffFlag_(" + i + ")  2 " + br);
+            this.scriptFile.write(" set turnOnFlag_(" + i + ")  2 " + br);
+            this.scriptFile.write(" set initialOffTime_(" + i + ") 0 " + br);
+            this.scriptFile.write(" set endOffTime_(" + i + ") 0 " + br);
+
+        } else {
+            Boolean disappearCond =
+                    (turnOffNodeData.getInitialTime() >= this.data.getT0())
+                            && (turnOffNodeData.getInitialTime() < this.data.getTf());
+
+            Boolean returnCond =
+                    (turnOffNodeData.getEndTime() >= this.data.getT0())
+                            && (turnOffNodeData.getEndTime() < this.data.getTf());
+
+            // make disappear and reappear in same time slot
+            if (disappearCond && returnCond) {
+                this.scriptFile.write(" # both events to turn off and on are considered in this slot" + br);
+                this.scriptFile.write(" set turnOffFlag_(" + i + ")  1 " + br);
+                this.scriptFile.write(" set turnOnFlag_(" + i + ")  1 " + br);
+
+                this.scriptFile.write(" set initialOffTime_(" + i + ") "
+                        + (turnOffNodeData.getInitialTime() + this.data.getTimeOffSet()) + br);
+
+                this.scriptFile.write(" set endOffTime_(" + i + ") "
+                        + (turnOffNodeData.getEndTime() + this.data.getTimeOffSet()) + br);
+
+            } else if (disappearCond) {
+                this.scriptFile.write(" # this node turns off in this slot" + br);
+                this.scriptFile.write(" set turnOffFlag_(" + i + ")  1 " + br);
+                this.scriptFile.write(" set turnOnFlag_(" + i + ")  0 " + br);
+
+                this.scriptFile.write(" set initialOffTime_(" + i + ") "
+                        + (turnOffNodeData.getInitialTime() + this.data.getTimeOffSet()) + br);
+
+                this.scriptFile.write(" set endOffTime_(" + i + ") "
+                        + (turnOffNodeData.getEndTime() + this.data.getTimeOffSet()) + br);
+
+            } else if (returnCond) {
+                this.scriptFile.write(" # this node turns on in this slot" + br);
+                this.scriptFile.write(" set turnOffFlag_(" + i + ")  0 " + br);
+                this.scriptFile.write(" set turnOnFlag_(" + i + ")  1 " + br);
+
+                this.scriptFile.write(" set initialOffTime_(" + i + ") "
+                        + (turnOffNodeData.getInitialTime() + this.data.getTimeOffSet()) + br);
+
+                this.scriptFile.write(" set endOffTime_(" + i + ") "
+                        + (turnOffNodeData.getEndTime() + this.data.getTimeOffSet()) + br);
+            }
+        }
     }
 
     private void writeNodePositions() throws IOException {
@@ -176,19 +274,32 @@ public class ScriptGeneratorDSR {
         this.scriptFile.write(br + "puts \"adjusting node initial position\"" + br 
                                  + "set adjcentNodeAsoluteCount   $opt(nc)" + br
                                  + "for {set i 0} {$i < $opt(nc)} {incr i} {" + br + br
-                                 + "    if {$i == 0} {" + br
-                                 + "            set pos_x 0" + br
-                                 + "            set pos_y [expr $rad * $distNodes]" + br
+                                 + "    if {$i ==  0} {" + br
+                                 + "            set pos_x $initial_x" + br
+                                 + "            set pos_y [expr $rad * $distNodes + $initial_y]" + br
                                  + "    } elseif {$i % $rad  == 0 } {" + br
-                                 + "            set pos_x 0" + br
+                                 + "            set pos_x $initial_x" + br
                                  + "            set pos_y [expr $pos_y - $distNodes]" + br
                                  + "    } else {" + br
                                  + "            set pos_x [expr $pos_x + $distNodes]" + br
                                  + "    }" + br
                                  + "    puts \"node $i: ($pos_x, $pos_y)\"" + br
-                                 + "    $node_($i) set X_ $pos_x" + br
-                                 + "    $node_($i) set Y_ $pos_y" + br
-                                 + "    $node_($i) set Z_ 0" + br + br   
+                                 + "    if {$turnOffFlag_($i) != 2 && $turnOnFlag_($i) != 1} { " + br 
+                                 + "       $node_($i) set X_ $pos_x" + br
+                                 + "       $node_($i) set Y_ $pos_y" + br
+                                 + "       $node_($i) set Z_ 0"      + br   
+                                 + "    } else {" + br
+                                 + "       #put inactive nodes far away                   " + br
+                                 + "       $node_($i) set X_ [ expr $pos_x + $farXOffset ]" + br
+                                 + "       $node_($i) set Y_ [ expr $pos_y + $farYOffset ]" + br
+                                 + "       $node_($i) set Z_ 0                            " + br  
+                                 + "    }" + br
+                                 + "    if {$turnOffFlag_($i) == 1} {" + br
+                                 +         this.writeNodePositionChange("$initialOffTime_($i)", "$i", "[ expr $pos_x + $farXOffset ]", "[ expr $pos_y + $farYOffset ]")
+                                 + "    } " + br  
+                                 + "    if {$turnOnFlag_($i) == 1} {" + br
+                                 +         this.writeNodePositionChange("$endOffTime_($i)", "$i", "$pos_x", "$pos_y")
+                                 + "    } " + br  
                                  + "    if {$totalAdjacentNodes_($i) > 0} {" + br
                                  + "        puts \"adjusting node $i adjacent source and destination nodes initial positions\"" + br
                                  + "        set angle [ expr 2 * $PI/$totalAdjacentNodes_($i) ]" + br 
@@ -196,11 +307,21 @@ public class ScriptGeneratorDSR {
                                  + "            #clockwise fulfilling" + br  
                                  + "            set pos_a_x [ expr $pos_x - $closeAdjacentNodes * cos($j * $angle) ]" + br
                                  + "            set pos_a_y [ expr $pos_y + $closeAdjacentNodes * sin($j * $angle) ]" + br 
-                                 + "            $node_($adjcentNodeAsoluteCount) set X_ $pos_a_x" + br 
-                                 + "            $node_($adjcentNodeAsoluteCount) set Y_ $pos_a_y" + br
-                                 + "            $node_($adjcentNodeAsoluteCount) set Z_ 0" + br 
-                                 + "            if {turnOffNodeFlag($i) != 0} {" + br
-                                 + "                $ns_ at " + this.data.getT0() + this.timeOffset + "  $node_($adjcentNodeAsoluteCount) setdest [ expr $pos_a_x + $farXoffset ] [ expr $pos_a_y + $farYOffset ] $farSpeed" + br
+                                 + "            if {$turnOffFlag_($i) != 2 && $turnOnFlag_($i) != 1} { " + br
+                                 + "              $node_($adjcentNodeAsoluteCount) set X_ $pos_a_x" + br 
+                                 + "              $node_($adjcentNodeAsoluteCount) set Y_ $pos_a_y" + br
+                                 + "              $node_($adjcentNodeAsoluteCount) set Z_ 0" + br 
+                                 + "            } else {" + br
+                                 + "              #put inactive nodes far away                 " + br
+                                 + "              $node_($adjcentNodeAsoluteCount) set X_ [ expr $pos_a_x + $farXOffset ]" + br 
+                                 + "              $node_($adjcentNodeAsoluteCount) set Y_ [ expr $pos_a_y + $farYOffset ]" + br
+                                 + "              $node_($adjcentNodeAsoluteCount) set Z_ 0" + br 
+                                 + "            }" + br
+                                 + "            if {$turnOffFlag_($i) == 1} {" + br
+                                 +                 this.writeNodePositionChange("$initialOffTime_($i)", "$adjacentNodeCount", "[ expr $pos_a_x + $farXOffset ]", "[ expr $pos_a_y + $farYOffset ]")
+                                 + "            } " + br
+                                 + "            if {$turnOnFlag_($i) == 1} {" + br
+                                 +                 this.writeNodePositionChange("$endOffTime_($i)", "$adjacentNodeCount", "$pos_a_x", "$pos_a_y")
                                  + "            } " + br
                                  + "            puts \"node $adjcentNodeAsoluteCount: ($pos_a_x, $pos_a_y)\"" + br
                                  + "            incr adjcentNodeAsoluteCount" + br
@@ -240,12 +361,6 @@ public class ScriptGeneratorDSR {
                                  + "$ns_ at " + (t0 + (flow * this.deltaFlow)) + " \"$cbr(" + flow + ") start\"" + br
                                  + "$ns_ at " + (tf + this.timeOffset) + " \"$cbr(" + flow + ") stop\"" + br);
        // @formatter:on 
-    }
-
-    private void writeNodeDeactivation(Float timeOff, Float farXOffset, Float farYOffset, Float farSpeed)
-            throws IOException {
-        this.scriptFile.write("$ns_ at " + timeOff + " $node_ setdest " + farXOffset + " " + farYOffset + " "
-                + farSpeed + br);
     }
 
     private void writeSimulation() throws IOException {

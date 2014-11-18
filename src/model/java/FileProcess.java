@@ -98,6 +98,8 @@ public class FileProcess {
             simulation.setPacketSize(this.simulationParams.getPacketSize());
             simulation.setWirelessProtocol(this.simulationParams.getWirelessProtocol());
             simulation.setFileRadical(this.simulationParams.getWirelessFileDiscriminator() + i);
+            simulation.setTurnOffNodes(this.simulationParams.getTurnOffNodes());
+            simulation.setTimeOffSet(SimulationParams.getTimeOffset());
             simulationData.add(i, simulation);
             simulationInit += this.simulationParams.getTimeInterval();
         }

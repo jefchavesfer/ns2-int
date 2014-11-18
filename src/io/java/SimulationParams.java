@@ -5,6 +5,7 @@ package io.java;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 
 /**
@@ -40,7 +41,7 @@ public class SimulationParams {
     private List<String> wiredBandwidth = new ArrayList<String>();
     private List<String> linkDelay = new ArrayList<String>();
     private List<Float> meanDelayError = new ArrayList<Float>();
-    private List<Integer> turnOffNodes = new ArrayList<Integer>();
+    private Vector<TurnOffNode> turnOffNodes = new Vector<TurnOffNode>();
     private Float dissimilarityCoefficient;
     private Float maxRelDifDeliveryRate;
     private Float maxRelDifMeanDelay;
@@ -548,21 +549,21 @@ public class SimulationParams {
      * @param turnOffNode
      *            adds one node id to be turn off
      */
-    public void ddTurnOffNode(Integer turnOffNode) {
+    public void addTurnOffNode(TurnOffNode turnOffNode) {
         this.turnOffNodes.add(turnOffNode);
     }
 
     /**
      * @return o valor da propriedade turnOffNodes
      */
-    public List<Integer> getTurnOffNodes() {
+    public Vector<TurnOffNode> getTurnOffNodes() {
         return this.turnOffNodes;
     }
 
     /**
      * @param turnOffNodes
      */
-    public void setTurnOffNodes(List<Integer> turnOffNodes) {
+    public void setTurnOffNodes(Vector<TurnOffNode> turnOffNodes) {
         this.turnOffNodes = turnOffNodes;
     }
 

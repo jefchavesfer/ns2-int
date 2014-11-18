@@ -4,6 +4,7 @@ package scriptGen.java;
 
 import io.java.NodeData;
 import io.java.SimulationParams;
+import io.java.TurnOffNode;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -49,9 +50,10 @@ public class WiredScriptGenerator {
         this.scriptFile = new FileWriter(this.simulationParams.getWiredFileDiscriminator() + ".tcl");
     }
 
-    private List<LinkInfo> generateDeactivateLinkList(int node) {
+    private List<LinkInfo> generateDeactivateLinkList(TurnOffNode turnOffNode) {
         List<LinkInfo> wiredLinks = new ArrayList<LinkInfo>();
-        int nodeCluster = (node - this.n0) % this.simulationParams.getNumberOfNodesInCluster();
+
+        int nodeCluster = (turnOffNode.getNodeIndex() - this.n0) % this.simulationParams.getNumberOfNodesInCluster();
 
         int clusterSide = (int) Math.sqrt(this.simulationParams.getNumberOfNodesInCluster());
         // inner cluster coordinates
@@ -82,24 +84,24 @@ public class WiredScriptGenerator {
             }
         }
 
-        if (infCluster < this.simulationParams.getNumberOfNodesInCluster()) {
-            wiredLinks.add(new LinkInfo(clusterX, infCluster, nodeX, nodeY, nodeX, nodeY));
+        if (infCluster < this.simulationParams.getNumberOfClusters()) {
+            wiredLinks.add(new LinkInfo(nodeCluster, infCluster, nodeX, nodeY, nodeX, nodeY));
 
             if ((infCluster % clusterX) != 0) {
-                wiredLinks.add(new LinkInfo(clusterX, diagonalInfLeftCluster, nodeX, nodeY, nodeX, nodeY));
+                wiredLinks.add(new LinkInfo(nodeCluster, diagonalInfLeftCluster, nodeX, nodeY, nodeX, nodeY));
             }
 
             if (((infCluster + 1) % clusterX) != 0) {
-                wiredLinks.add(new LinkInfo(clusterX, diagonalInfRightCluster, nodeX, nodeY, nodeX, nodeY));
+                wiredLinks.add(new LinkInfo(nodeCluster, diagonalInfRightCluster, nodeX, nodeY, nodeX, nodeY));
             }
         }
 
-        if ((node % clusterX) != 0) {
-            wiredLinks.add(new LinkInfo(clusterX, leftCluster, nodeX, nodeY, nodeX, nodeY));
+        if ((nodeCluster % clusterX) != 0) {
+            wiredLinks.add(new LinkInfo(nodeCluster, leftCluster, nodeX, nodeY, nodeX, nodeY));
         }
 
-        if (((node + 1) % clusterX) != 0) {
-            wiredLinks.add(new LinkInfo(clusterX, rightCluster, nodeX, nodeY, nodeX, nodeY));
+        if (((nodeCluster + 1) % clusterX) != 0) {
+            wiredLinks.add(new LinkInfo(nodeCluster, rightCluster, nodeX, nodeY, nodeX, nodeY));
         }
 
         return wiredLinks;
@@ -420,12 +422,15 @@ public class WiredScriptGenerator {
 				"}"																																					+ br
 				);
 		                
-				for ( Integer turnOffNode : this.simulationParams.getTurnOffNodes()){
+				for ( TurnOffNode turnOffNode : this.simulationParams.getTurnOffNodes()){
 				    List<LinkInfo> turnOffNodeData = this.generateDeactivateLinkList(turnOffNode);
 				    this.scriptFile.write(br + "#wired nodes to be turned off" + br);
 				    for ( LinkInfo turnOffInfo : turnOffNodeData ){
-				        this.scriptFile.write("$ns rtmodel-at 1.0 down $r([" + turnOffInfo.getSourceCluster() +      "]["+ turnOffInfo.getSourceNodeX()        +"][" + turnOffInfo.getSourceNodeY() +      "])" +
-				        		                             " $r([" + turnOffInfo.getDestinationCluster() + "][" + turnOffInfo.getDestinationNodeX() + "][" + turnOffInfo.getDestinationNodeY() + "])" + br);
+				        this.scriptFile.write("$ns rtmodel-at "+ turnOffNode.getInitialTime() + " down $r([" + turnOffInfo.getSourceCluster() +      "]["+ turnOffInfo.getSourceNodeX()        +"][" + turnOffInfo.getSourceNodeY()      + "])" +
+				        		                                                            " $r([" + turnOffInfo.getDestinationCluster() + "][" + turnOffInfo.getDestinationNodeX() + "][" + turnOffInfo.getDestinationNodeY() + "])"  + br);
+				        
+	                                this.scriptFile.write("$ns rtmodel-at "+ turnOffNode.getEndTime()     + " up $r([" + turnOffInfo.getSourceCluster() +      "][" + turnOffInfo.getSourceNodeX()        +"][" + turnOffInfo.getSourceNodeY()      + "])" +
+                                                                                                                "    $r([" + turnOffInfo.getDestinationCluster() + "][" + turnOffInfo.getDestinationNodeX() + "][" + turnOffInfo.getDestinationNodeY() +  "])" + br);
 				    }
 				}
 				
